@@ -57,4 +57,27 @@ self.addEventListener('fetch', (event) => {
       });
     })
   );
+});  // Network-first for Supabase API calls
+  if (url.hostname.includes('supabase.co')) {
+    event.respondWith(fetch(event.request).catch(() => new Response('offline', { status: 503 })));
+    return;
+  }
+
+  // Cache-first for static assets
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(event.request).then((response) => {
+        if (response.ok && event.request.method === 'GET') {
+          const cloned = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, cloned));
+        }
+        return response;
+      }).catch(() => {
+        if (event.request.destination === 'document') {
+          return caches.match('/index.html');
+        }
+      });
+    })
+  );
 });
