@@ -124,7 +124,7 @@
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 12px; padding: 13px 15px;
       color: var(--text); font-family: var(--mono); font-size: 0.88rem;
-      outline: none; width: 100%; -webkit-appearance: none;
+      outline: none; width: 100%; appearance: none; -webkit-appearance: none;
       transition: border-color var(--transition), box-shadow var(--transition);
     }
     .input-group input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
@@ -401,7 +401,8 @@
     #scan-status { font-family: var(--mono); font-size: 0.68rem; color: var(--text-muted); text-align: center; }
 
     /* Confirm */
-    .confi      --sans: 'Syne', sans-serif;
+    .confi  {
+      --sans: 'Syne', sans-serif;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
@@ -494,6 +495,7 @@
       outline: none; width: 100%;
       transition: border-color var(--transition), box-shadow var(--transition);
       -webkit-appearance: none;
+      appearance: none;
     }
     .input-group input:focus {
       border-color: var(--accent);
@@ -883,6 +885,7 @@
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
       -webkit-appearance: none;
+      appearance: none;
     }
     .input-group input:focus {
       border-color: var(--accent);
