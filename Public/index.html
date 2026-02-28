@@ -1349,6 +1349,277 @@
 
     /* ── SETTINGS OPEN BTN in TOP BAR ───────────────────── */
     .settings-btn { margin-left: 4px; }
+
+    /* ── HAMBURGER MENU BTN ─────────────────────────────── */
+    .hamburger-btn {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0; border: none; background: none; padding: 0;
+    }
+    .hamburger-btn svg { width: 22px; height: 22px; fill: var(--text); transition: fill 0.2s; }
+
+    /* ── SIDEBAR DRAWER ─────────────────────────────────── */
+    .sidebar-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      z-index: 150; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .sidebar-overlay.open { opacity: 1; pointer-events: all; }
+
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: 280px; max-width: 80vw;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      z-index: 160;
+      transform: translateX(-100%);
+      transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+      display: flex; flex-direction: column;
+      padding: calc(var(--safe-top) + 16px) 16px var(--safe-bottom);
+      overflow-y: auto;
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .sidebar-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-title {
+      font-size: 1.2rem; font-weight: 800;
+      font-family: var(--sans);
+    }
+    .sidebar-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--surface2); border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1.1rem; color: var(--text-muted);
+    }
+
+    .sidebar-section-label {
+      font-family: var(--mono); font-size: 0.6rem; color: var(--text-muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding-left: 4px; margin: 16px 0 8px;
+    }
+
+    .sidebar-contact {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 12px;
+      transition: background 0.2s; cursor: pointer;
+    }
+    .sidebar-contact:active { background: var(--surface2); }
+    .sidebar-contact-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem; color: #fff; flex-shrink: 0;
+      position: relative;
+    }
+    .sidebar-contact-name { font-size: 0.85rem; font-weight: 600; }
+    .sidebar-contact-status { font-family: var(--mono); font-size: 0.6rem; color: var(--text-muted); }
+    .sidebar-contact .status-dot { width: 10px; height: 10px; border-width: 2px; }
+
+    .sidebar-actions {
+      display: flex; gap: 8px; margin-top: 16px; padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .sidebar-action-btn {
+      flex: 1; padding: 10px; border-radius: 12px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); font-family: var(--mono); font-size: 0.65rem;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+    }
+    .sidebar-action-btn:active { transform: scale(0.96); }
+    .sidebar-action-btn svg { width: 16px; height: 16px; fill: var(--text-muted); display: block; margin: 0 auto 4px; }
+
+    /* ── FAB HIDE ON SIDEBAR ────────────────────────────── */
+    .fab-container.sidebar-hidden,
+    .locate-me-btn.sidebar-hidden,
+    .side-btns.sidebar-hidden {
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .fab-container,
+    .locate-me-btn,
+    .side-btns {
+      transition: opacity 0.25s ease;
+    }
+
+    /* ── TITLE GRADIENT ─────────────────────────────────── */
+    .app-name-text {
+      font-family: var(--sans);
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: filter 0.3s;
+    }
+    .app-name-text:hover {
+      filter: drop-shadow(0 0 8px rgba(59,130,246,0.5));
+    }
+
+    /* ── ARROW MARKER (compass mode) ───────────────────── */
+    .my-marker-arrow {
+      width: 0; height: 0; position: relative;
+    }
+    .my-marker-arrow svg {
+      width: 32px; height: 32px;
+      filter: drop-shadow(0 0 6px var(--accent-glow));
+      transition: transform 0.15s linear;
+    }
+
+    /* ── MARKER COLOR CODING ───────────────────────────── */
+    .my-marker.marker-green { background: var(--green); box-shadow: 0 0 20px var(--green-glow); }
+    .my-marker.marker-orange { background: var(--orange); box-shadow: 0 0 20px var(--orange-glow); }
+    .my-marker.marker-red { background: var(--red); box-shadow: 0 0 20px rgba(239,68,68,0.4); }
+    .pulse-ring.marker-green { border-color: var(--green); }
+    .pulse-ring.marker-orange { border-color: var(--orange); }
+    .pulse-ring.marker-red { border-color: var(--red); }
+
+    /* ── GHOST MODE INDICATOR ──────────────────────────── */
+    .ghost-indicator {
+      position: fixed;
+      top: calc(var(--safe-top) + 58px);
+      right: 16px;
+      z-index: 110;
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-family: var(--mono); font-size: 0.6rem;
+      color: var(--red);
+      display: none; align-items: center; gap: 6px;
+      backdrop-filter: blur(12px);
+    }
+    .ghost-indicator.visible { display: flex; }
+    .ghost-indicator-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--red);
+      animation: blink 1.5s ease-in-out infinite;
+    }
+
+    /* ── BATTERY DISPLAY ───────────────────────────────── */
+    .battery-chip {
+      font-family: var(--mono); font-size: 0.58rem;
+      color: var(--text-muted);
+      display: flex; align-items: center; gap: 3px;
+      margin-left: 4px;
+    }
+    .battery-chip svg { width: 12px; height: 12px; fill: var(--text-muted); }
+    .battery-chip.low svg { fill: var(--red); }
+    .battery-chip.low { color: var(--red); }
+    .contact-battery {
+      font-family: var(--mono); font-size: 0.58rem;
+      color: var(--text-muted);
+      display: inline-flex; align-items: center; gap: 2px;
+    }
+    .contact-battery svg { width: 10px; height: 10px; fill: var(--text-muted); }
+
+    /* ── DARK / LIGHT MODE ─────────────────────────────── */
+    body.light-mode {
+      --bg: #f0f4f8;
+      --surface: rgba(255,255,255,0.97);
+      --surface2: rgba(240,244,248,0.95);
+      --border: rgba(0,0,0,0.1);
+      --text: #1a202c;
+      --text-muted: #718096;
+    }
+    body.light-mode .top-bar {
+      background: linear-gradient(to bottom, rgba(240,244,248,0.95) 60%, transparent);
+    }
+    body.light-mode .leaflet-tile { filter: none; }
+    body.light-mode .my-marker { border-color: #333; }
+    body.light-mode .user-marker { border-color: #333; }
+
+    .toggle-switch {
+      position: relative; display: inline-block;
+      width: 44px; height: 24px; flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute; left: 2px; top: 2px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      transition: all 0.3s;
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background: var(--accent); border-color: var(--accent);
+    }
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+      background: #fff;
+    }
+
+    /* ── GEOFENCE MODAL ────────────────────────────────── */
+    .geofence-list {
+      display: flex; flex-direction: column; gap: 8px;
+      max-height: 200px; overflow-y: auto;
+    }
+    .geofence-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 12px;
+    }
+    .geofence-item-info { flex: 1; }
+    .geofence-item-name { font-weight: 600; font-size: 0.85rem; }
+    .geofence-item-radius { font-family: var(--mono); font-size: 0.6rem; color: var(--text-muted); }
+    .geofence-item-remove {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(239,68,68,0.1); border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--red); font-size: 0.9rem;
+    }
+    .geofence-form { display: flex; flex-direction: column; gap: 8px; }
+    .geofence-form input {
+      width: 100%; padding: 10px 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: var(--mono); font-size: 0.75rem;
+      outline: none;
+    }
+    .geofence-form input:focus { border-color: var(--accent); }
+    .geofence-form .geofence-row { display: flex; gap: 8px; }
+    .geofence-form .geofence-row input { flex: 1; }
+
+    /* ── ORIZON WORLD MODAL ─────────────────────────────── */
+    .orizon-world-content {
+      display: flex; flex-direction: column; gap: 18px;
+      max-height: 55vh; overflow-y: auto;
+      padding-right: 4px;
+    }
+    .orizon-world-section { }
+    .orizon-world-section h3 {
+      font-size: 0.9rem; font-weight: 700;
+      margin-bottom: 6px; color: var(--accent);
+    }
+    .orizon-world-section p {
+      font-family: var(--mono); font-size: 0.68rem;
+      color: var(--text-muted); line-height: 1.7;
+    }
+
+    /* ── LAST SEEN PROMINENT ───────────────────────────── */
+    .contact-last-seen {
+      font-family: var(--mono); font-size: 0.6rem;
+      color: var(--orange); margin-top: 1px;
+    }
+
+    /* ── CONTACT CARD BATTERY ──────────────────────────── */
+    .contact-card-meta {
+      display: flex; align-items: center; gap: 6px;
+      flex-wrap: wrap;
+    }
   </style>
 </head>
 <body>
@@ -1416,20 +1687,58 @@
 
   <!-- Top Bar -->
   <div class="top-bar">
-    <div class="app-name">
-      <div class="dot" id="tracking-dot"></div>
-      Orizon
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="hamburger-btn" onclick="openSidebar()" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      </button>
+      <div class="app-name">
+        <div class="dot" id="tracking-dot"></div>
+        <span class="app-name-text">Orizon</span>
+      </div>
     </div>
     <div class="top-actions">
       <div class="profile-chip" onclick="openSettings()">
         <div class="profile-chip-avatar" id="profile-avatar">?</div>
         <span class="profile-chip-name" id="profile-name">...</span>
+        <span class="battery-chip" id="battery-chip" style="display:none">
+          <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+          <span id="battery-level">--</span>
+        </span>
       </div>
     </div>
   </div>
 
-  <!-- Compass Bar -->
-  <div class="compass-bar" id="compass-bar">
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <!-- Sidebar Drawer -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Cerchia</div>
+      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+    <div class="sidebar-section-label">Contatti</div>
+    <div id="sidebar-contacts-list"></div>
+    <div class="sidebar-actions">
+      <div class="sidebar-action-btn" onclick="closeSidebar();openQRModal()">
+        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        Aggiungi
+      </div>
+      <div class="sidebar-action-btn" onclick="closeSidebar();togglePanel()">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        Pannello
+      </div>
+    </div>
+  </div>
+
+  <!-- Ghost Mode Indicator -->
+  <div class="ghost-indicator" id="ghost-indicator">
+    <div class="ghost-indicator-dot"></div>
+    GHOST MODE
+  </div>
+
+  <!-- Compass Bar (hidden, replaced by arrow marker) -->
+  <div class="compass-bar" id="compass-bar" style="display:none">
     <span class="compass-needle" id="compass-needle">🧭</span>
     <span id="compass-text">N 0°</span>
   </div>
@@ -1596,12 +1905,53 @@
       </div>
     </div>
     <div class="settings-group">
+      <div class="settings-group-label">Aspetto</div>
+      <div class="settings-item" style="cursor:default">
+        <svg viewBox="0 0 24 24"><path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></svg>
+        <div class="settings-item-text">
+          <div class="settings-item-title">Modalità Chiara</div>
+          <div class="settings-item-value">Cambia tema colori</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-group-label">Privacy</div>
+      <div class="settings-item" onclick="toggleGhostMode()" id="ghost-mode-item">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <div class="settings-item-text">
+          <div class="settings-item-title">Ghost Mode</div>
+          <div class="settings-item-value" id="ghost-mode-status">Disattivato · La posizione si aggiorna</div>
+        </div>
+      </div>
+      <div class="settings-item" onclick="openGeofenceModal()">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        <div class="settings-item-text">
+          <div class="settings-item-title">Geofence</div>
+          <div class="settings-item-value">Notifiche di zona per i contatti</div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-group">
       <div class="settings-group-label">Info</div>
       <div class="settings-item" style="cursor:default">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
         <div class="settings-item-text">
           <div class="settings-item-title">Orizon</div>
           <div class="settings-item-value">Versione 1.0.0 · Build 202405</div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-group-label">Scopri</div>
+      <div class="settings-item" onclick="openOrizonWorld()">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        <div class="settings-item-text">
+          <div class="settings-item-title">Il Mondo Orizon</div>
+          <div class="settings-item-value">Scopri la visione e le funzionalità</div>
         </div>
       </div>
     </div>
@@ -1618,6 +1968,55 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<!-- GEOFENCE MODAL -->
+<div class="modal-overlay" id="geofence-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Geofence</div>
+      <div class="close-btn" onclick="closeGeofenceModal()">✕</div>
+    </div>
+    <div class="geofence-list" id="geofence-list"></div>
+    <div class="geofence-form">
+      <input type="text" id="geofence-name" placeholder="Nome del luogo (es. Casa)">
+      <div class="geofence-row">
+        <input type="number" id="geofence-lat" placeholder="Latitudine" step="any">
+        <input type="number" id="geofence-lng" placeholder="Longitudine" step="any">
+      </div>
+      <input type="number" id="geofence-radius" placeholder="Raggio in metri (es. 500)" min="50" step="50">
+      <button class="btn btn-primary" style="width:100%" onclick="addGeofence()">Aggiungi Geofence</button>
+      <button class="btn" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:0.7rem" onclick="useCurrentPositionForGeofence()">📍 Usa posizione attuale</button>
+    </div>
+  </div>
+</div>
+
+<!-- IL MONDO ORIZON MODAL -->
+<div class="modal-overlay" id="orizon-world-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Il Mondo Orizon</div>
+      <div class="close-btn" onclick="closeOrizonWorld()">✕</div>
+    </div>
+    <div class="orizon-world-content">
+      <div class="orizon-world-section">
+        <h3>🌍 Obiettivo</h3>
+        <p>Orizon nasce con la missione di connettere le persone in modo sicuro e trasparente. Crediamo che sapere dove si trovano i propri cari porti tranquillità e rafforzi i legami. La nostra visione è un mondo dove la condivisione della posizione è un gesto di fiducia, non di controllo.</p>
+      </div>
+      <div class="orizon-world-section">
+        <h3>🧭 Guida Funzionalità</h3>
+        <p><strong>Bussola & Giroscopio:</strong> Attiva la modalità bussola per trasformare il tuo indicatore in una freccia direzionale che segue l'orientamento del dispositivo. Perfetto per navigare verso i tuoi amici.</p>
+        <p><strong>Gestione Cerchia:</strong> Usa il menu laterale per vedere rapidamente i tuoi contatti. Aggiungi amici scansionando il QR code. Puoi nascondere singoli contatti dalla mappa mantenendo la connessione.</p>
+        <p><strong>Ghost Mode:</strong> Congela la tua posizione quando hai bisogno di privacy. La tua ultima posizione nota rimarrà visibile ma non si aggiornerà.</p>
+        <p><strong>Geofence:</strong> Imposta zone virtuali e ricevi notifiche quando un contatto entra o esce da un'area definita.</p>
+      </div>
+      <div class="orizon-world-section">
+        <h3>🔒 Privacy Manifesto</h3>
+        <p>La privacy è al centro di Orizon. I tuoi dati di posizione sono criptati e accessibili solo ai contatti che hai esplicitamente approvato. Non vendiamo, non condividiamo e non analizziamo i tuoi dati per scopi pubblicitari.</p>
+        <p>Hai sempre il pieno controllo: puoi attivare il Ghost Mode, nascondere singoli contatti o disattivare completamente la visibilità con un solo tocco. I dati di posizione vengono aggiornati in tempo reale e non vengono conservati come storico.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ─── CONFIG ─────────────────────────────────────────────
@@ -1638,6 +2037,7 @@ let myMarker = null;
 let myPulse = null;
 let contactMarkers = {};
 let isVisible = true;
+let visibilityState = 'visible'; // 'visible' | 'limited' | 'ghost'
 let panelOpen = false;
 let geoWatcher = null;
 let realtimeChannel = null;
@@ -1647,9 +2047,17 @@ let videoStream = null;
 let contacts = [];
 let compassMode = false;
 let compassHeading = 0;
+let ghostMode = false;
+let frozenLat = null;
+let frozenLng = null;
+let batteryLevel = null;
+let geofences = (() => { try { return JSON.parse(localStorage.getItem('orizon_geofences') || '[]'); } catch { return []; } })();
+let geofenceStates = {};
 let hiddenUsers = (() => { try { return JSON.parse(localStorage.getItem('orizon_hidden_users') || '[]'); } catch { return []; } })();
 let navTargetLat = null;
 let navTargetLng = null;
+let darkTileLayer = null;
+let lightTileLayer = null;
 
 // ─── INIT ────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
@@ -1839,21 +2247,74 @@ function initMap() {
     attributionControl: false
   });
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  darkTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19
-  }).addTo(map);
+  });
+  lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  });
+
+  const isLight = localStorage.getItem('orizon_theme') === 'light';
+  if (isLight) {
+    document.body.classList.add('light-mode');
+    document.getElementById('theme-toggle').checked = true;
+    lightTileLayer.addTo(map);
+  } else {
+    darkTileLayer.addTo(map);
+  }
+
+  initBattery();
+}
+
+function getMarkerColorClass() {
+  if (ghostMode || visibilityState === 'ghost') return 'marker-red';
+  if (visibilityState === 'limited') return 'marker-orange';
+  return 'marker-green';
 }
 
 function createMyMarker(lat, lng) {
-  if (myMarker) { myMarker.setLatLng([lat, lng]); return; }
+  if (myMarker) {
+    myMarker.setLatLng([lat, lng]);
+    updateMyMarkerAppearance();
+    return;
+  }
 
   const el = document.createElement('div');
   el.style.cssText = 'position:relative;width:16px;height:16px;';
-  el.innerHTML = `<div class="my-marker"></div><div class="pulse-ring"></div>`;
+  el.id = 'my-marker-container';
 
-  myMarker = L.marker([lat, lng], {
-    icon: L.divIcon({ html: el, className: '', iconSize: [16, 16], iconAnchor: [8, 8] })
-  }).addTo(map);
+  if (compassMode) {
+    el.style.cssText = 'position:relative;width:32px;height:32px;';
+    el.innerHTML = `<div class="my-marker-arrow"><svg viewBox="0 0 24 24" fill="${ghostMode ? 'var(--red)' : 'var(--accent)'}"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg></div>`;
+    myMarker = L.marker([lat, lng], {
+      icon: L.divIcon({ html: el, className: '', iconSize: [32, 32], iconAnchor: [16, 16] })
+    }).addTo(map);
+  } else {
+    const colorClass = getMarkerColorClass();
+    el.innerHTML = `<div class="my-marker ${colorClass}"></div><div class="pulse-ring ${colorClass}"></div>`;
+    myMarker = L.marker([lat, lng], {
+      icon: L.divIcon({ html: el, className: '', iconSize: [16, 16], iconAnchor: [8, 8] })
+    }).addTo(map);
+  }
+}
+
+function updateMyMarkerAppearance() {
+  if (!myMarker) return;
+  const container = document.getElementById('my-marker-container');
+  if (!container) return;
+
+  if (compassMode) {
+    container.style.cssText = 'position:relative;width:32px;height:32px;';
+    const fillColor = ghostMode ? 'var(--red)' : (visibilityState === 'limited' ? 'var(--orange)' : 'var(--accent)');
+    container.innerHTML = `<div class="my-marker-arrow"><svg viewBox="0 0 24 24" fill="${fillColor}"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg></div>`;
+    const latlng = myMarker.getLatLng();
+    myMarker.setIcon(L.divIcon({ html: container, className: '', iconSize: [32, 32], iconAnchor: [16, 16] }));
+  } else {
+    container.style.cssText = 'position:relative;width:16px;height:16px;';
+    const colorClass = getMarkerColorClass();
+    container.innerHTML = `<div class="my-marker ${colorClass}"></div><div class="pulse-ring ${colorClass}"></div>`;
+    myMarker.setIcon(L.divIcon({ html: container, className: '', iconSize: [16, 16], iconAnchor: [8, 8] }));
+  }
 }
 
 function updateContactMarker(contact, lat, lng) {
@@ -1909,6 +2370,14 @@ function startGeolocation() {
   geoWatcher = navigator.geolocation.watchPosition(
     async (pos) => {
       const { latitude: lat, longitude: lng } = pos.coords;
+
+      if (ghostMode) {
+        // In ghost mode, show marker at frozen position
+        createMyMarker(frozenLat || lat, frozenLng || lng);
+        if (!frozenLat) { frozenLat = lat; frozenLng = lng; }
+        return;
+      }
+
       createMyMarker(lat, lng);
 
       if (!myMarker._hasCentered) {
@@ -1917,12 +2386,18 @@ function startGeolocation() {
       }
 
       // Update DB
-      await db.from('locations').upsert({
+      const upsertData = {
         user_id: currentUser.id,
         lat, lng,
         is_visible: isVisible,
         last_seen: new Date().toISOString()
-      }, { onConflict: 'user_id' });
+      };
+      if (batteryLevel !== null) upsertData.battery = batteryLevel;
+
+      await db.from('locations').upsert(upsertData, { onConflict: 'user_id' });
+
+      // Check geofences
+      checkGeofences();
     },
     (err) => showToast('Errore GPS: ' + err.message),
     { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
@@ -1938,27 +2413,49 @@ function stopGeolocation() {
 
 // ─── VISIBILITY ───────────────────────────────────────────
 async function toggleVisibility() {
-  isVisible = !isVisible;
+  // Cycle through: visible -> limited -> ghost -> visible
+  const states = ['visible', 'limited', 'ghost'];
+  const idx = states.indexOf(visibilityState);
+  visibilityState = states[(idx + 1) % 3];
+
   const fab = document.getElementById('visibility-fab');
   const icon = document.getElementById('vis-icon');
   const dot = document.getElementById('tracking-dot');
 
-  if (isVisible) {
+  if (visibilityState === 'visible') {
+    isVisible = true;
     fab.classList.remove('off', 'vis-off');
     fab.style.background = '';
     fab.style.boxShadow = '';
     icon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+    dot.style.background = 'var(--green)';
+    dot.style.boxShadow = '0 0 10px var(--green)';
     dot.classList.remove('vis-off', 'hidden-dot');
-    showToast('Posizione visibile ✓');
-  } else {
+    showToast('Posizione visibile a tutti ✓');
+  } else if (visibilityState === 'limited') {
+    isVisible = true;
     fab.classList.add('vis-off');
     fab.classList.remove('off');
-    fab.style.background = '';
-    fab.style.boxShadow = '';
-    icon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+    fab.style.background = 'var(--orange)';
+    fab.style.boxShadow = '0 4px 30px var(--orange-glow)';
+    icon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+    dot.style.background = 'var(--orange)';
+    dot.style.boxShadow = '0 0 10px var(--orange)';
     dot.classList.add('vis-off');
-    showToast('Posizione nascosta');
+    showToast('Visibilità limitata 🔶');
+  } else {
+    isVisible = false;
+    fab.classList.add('vis-off');
+    fab.style.background = 'var(--red)';
+    fab.style.boxShadow = '0 4px 30px rgba(239,68,68,0.4)';
+    icon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+    dot.style.background = 'var(--red)';
+    dot.style.boxShadow = '0 0 10px var(--red)';
+    dot.classList.add('vis-off');
+    showToast('Posizione nascosta a tutti 🔴');
   }
+
+  updateMyMarkerAppearance();
 
   await db.from('locations').update({ is_visible: isVisible })
     .eq('user_id', currentUser.id);
@@ -2002,7 +2499,14 @@ function contactStatusText(c, loc, isOnline, isHidden) {
     return 'Visibile';
   }
   const lastSeen = loc ? timeSince(new Date(loc.last_seen)) : 'Mai';
-  return 'Nascosto · ' + lastSeen;
+  return 'Visto ' + lastSeen;
+}
+
+function contactBatteryHtml(loc) {
+  if (!loc || loc.battery === undefined || loc.battery === null) return '';
+  const lvl = Math.round(loc.battery);
+  const cls = lvl <= 20 ? 'low' : '';
+  return `<span class="contact-battery ${cls}"><svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>${lvl}%</span>`;
 }
 
 function renderContactsList(locations) {
@@ -2026,6 +2530,10 @@ function renderContactsList(locations) {
     const statusText = contactStatusText(c, loc, isOnline, isHidden);
     const eyeSvg = isHidden ? SVG_EYE_OFF : SVG_EYE_ON;
     const eyeTitle = isHidden ? 'Mostra sulla mappa' : 'Nascondi dalla mappa';
+    const batteryHtml = contactBatteryHtml(loc);
+    const lastSeenHtml = (!isOnline && loc && loc.last_seen)
+      ? `<div class="contact-last-seen">Visto ${timeSince(new Date(loc.last_seen))}</div>`
+      : '';
     const navBtn = isOnline && !isHidden
       ? `<div class="mini-btn" onclick="event.stopPropagation();openNavModal('${c.display_name || c.email}',${loc.lat},${loc.lng})"><svg viewBox="0 0 24 24">${SVG_NAV}</svg></div>`
       : '';
@@ -2038,7 +2546,11 @@ function renderContactsList(locations) {
         </div>
         <div class="contact-info">
           <div class="contact-name">${c.display_name || c.email}</div>
-          <div class="contact-dist">${statusText}</div>
+          <div class="contact-card-meta">
+            <span class="contact-dist">${statusText}</span>
+            ${batteryHtml}
+          </div>
+          ${lastSeenHtml}
         </div>
         <div class="contact-actions">
           <div class="mini-btn hide-user-btn ${isHidden ? 'active' : ''}" onclick="event.stopPropagation();toggleHideUser('${c.id}')" title="${eyeTitle}">
@@ -2325,11 +2837,9 @@ function openGoogleMaps(mode) {
 function toggleCompass() {
   compassMode = !compassMode;
   const btn = document.getElementById('compass-btn');
-  const bar = document.getElementById('compass-bar');
   btn.classList.toggle('active-btn', compassMode);
 
   if (compassMode) {
-    bar.classList.add('visible');
     if (window.DeviceOrientationEvent) {
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission()
@@ -2342,31 +2852,33 @@ function toggleCompass() {
       showToast('Bussola non supportata');
       compassMode = false;
       btn.classList.remove('active-btn');
-      bar.classList.remove('visible');
+      return;
     }
+    updateMyMarkerAppearance();
+    showToast('Modalità freccia attiva 🧭');
   } else {
-    bar.classList.remove('visible');
     window.removeEventListener('deviceorientation', handleOrientation, true);
+    updateMyMarkerAppearance();
+    showToast('Modalità freccia disattivata');
   }
 }
 
 function handleOrientation(e) {
   if (!compassMode) return;
-  // Use webkitCompassHeading on iOS, or alpha on Android
   const heading = e.webkitCompassHeading !== null && e.webkitCompassHeading !== undefined
     ? e.webkitCompassHeading
     : (e.alpha !== null && e.alpha !== undefined ? (360 - e.alpha) % 360 : 0);
   compassHeading = heading;
 
-  const dirs = ['N','NE','E','SE','S','SO','O','NO'];
-  const dir = dirs[Math.round(heading / 45) % 8];
-  document.getElementById('compass-needle').style.transform = `rotate(${heading}deg)`;
-  document.getElementById('compass-text').textContent = `${dir} ${Math.round(heading)}°`;
-
-  // Rotate my marker with compass heading
+  // Rotate the arrow marker
   if (myMarker) {
-    const el = myMarker.getElement();
-    if (el) el.style.transform = `rotate(${heading}deg)`;
+    const container = document.getElementById('my-marker-container');
+    if (container) {
+      const arrow = container.querySelector('.my-marker-arrow svg');
+      if (arrow) {
+        arrow.style.transform = `rotate(${heading}deg)`;
+      }
+    }
   }
 }
 
@@ -2383,6 +2895,221 @@ function showToast(msg) {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── SIDEBAR ─────────────────────────────────────────────
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+  document.querySelector('.fab-container').classList.add('sidebar-hidden');
+  document.querySelector('.locate-me-btn').classList.add('sidebar-hidden');
+  document.querySelector('.side-btns').classList.add('sidebar-hidden');
+  renderSidebarContacts();
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+  document.querySelector('.fab-container').classList.remove('sidebar-hidden');
+  document.querySelector('.locate-me-btn').classList.remove('sidebar-hidden');
+  document.querySelector('.side-btns').classList.remove('sidebar-hidden');
+}
+
+function renderSidebarContacts() {
+  const list = document.getElementById('sidebar-contacts-list');
+  if (!contacts.length) {
+    list.innerHTML = '<div style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);padding:16px 0;text-align:center">Nessun contatto</div>';
+    return;
+  }
+  const colors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981'];
+  list.innerHTML = contacts.map(c => {
+    const initial = (c.display_name || '?')[0].toUpperCase();
+    const color = colors[(c.display_name || '').charCodeAt(0) % colors.length];
+    return `
+      <div class="sidebar-contact" onclick="closeSidebar();flyToContact('${c.id}',0,0,true)">
+        <div class="sidebar-contact-avatar" style="background:${color}">${initial}</div>
+        <div>
+          <div class="sidebar-contact-name">${c.display_name || c.email}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ─── DARK / LIGHT MODE ───────────────────────────────────
+function toggleTheme() {
+  const isLight = document.getElementById('theme-toggle').checked;
+  document.body.classList.toggle('light-mode', isLight);
+  localStorage.setItem('orizon_theme', isLight ? 'light' : 'dark');
+
+  if (map) {
+    if (isLight) {
+      if (darkTileLayer && map.hasLayer(darkTileLayer)) map.removeLayer(darkTileLayer);
+      if (lightTileLayer && !map.hasLayer(lightTileLayer)) lightTileLayer.addTo(map);
+    } else {
+      if (lightTileLayer && map.hasLayer(lightTileLayer)) map.removeLayer(lightTileLayer);
+      if (darkTileLayer && !map.hasLayer(darkTileLayer)) darkTileLayer.addTo(map);
+    }
+  }
+}
+
+// ─── GHOST MODE ──────────────────────────────────────────
+function toggleGhostMode() {
+  ghostMode = !ghostMode;
+  const indicator = document.getElementById('ghost-indicator');
+  const statusEl = document.getElementById('ghost-mode-status');
+
+  if (ghostMode) {
+    if (myMarker) {
+      const ll = myMarker.getLatLng();
+      frozenLat = ll.lat;
+      frozenLng = ll.lng;
+    }
+    indicator.classList.add('visible');
+    statusEl.textContent = 'Attivo · Posizione congelata';
+    document.getElementById('ghost-mode-item').style.borderColor = 'rgba(239,68,68,0.3)';
+    document.getElementById('ghost-mode-item').style.background = 'rgba(239,68,68,0.05)';
+    showToast('Ghost Mode attivato 👻');
+  } else {
+    frozenLat = null;
+    frozenLng = null;
+    indicator.classList.remove('visible');
+    statusEl.textContent = 'Disattivato · La posizione si aggiorna';
+    document.getElementById('ghost-mode-item').style.borderColor = '';
+    document.getElementById('ghost-mode-item').style.background = '';
+    showToast('Ghost Mode disattivato');
+  }
+
+  updateMyMarkerAppearance();
+}
+
+// ─── BATTERY API ─────────────────────────────────────────
+async function initBattery() {
+  if (!navigator.getBattery) return;
+  try {
+    const battery = await navigator.getBattery();
+    const update = () => {
+      batteryLevel = Math.round(battery.level * 100);
+      const chip = document.getElementById('battery-chip');
+      const lvlEl = document.getElementById('battery-level');
+      if (chip && lvlEl) {
+        chip.style.display = 'flex';
+        lvlEl.textContent = batteryLevel + '%';
+        chip.classList.toggle('low', batteryLevel <= 20);
+      }
+    };
+    update();
+    battery.addEventListener('levelchange', update);
+  } catch (e) { /* Battery API not available */ }
+}
+
+// ─── GEOFENCE ────────────────────────────────────────────
+function openGeofenceModal() {
+  closeSettings();
+  renderGeofenceList();
+  document.getElementById('geofence-modal').classList.add('open');
+}
+
+function closeGeofenceModal() {
+  document.getElementById('geofence-modal').classList.remove('open');
+}
+
+function renderGeofenceList() {
+  const list = document.getElementById('geofence-list');
+  if (!geofences.length) {
+    list.innerHTML = '<div style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);text-align:center;padding:12px">Nessun geofence impostato</div>';
+    return;
+  }
+  list.innerHTML = geofences.map((g, i) => `
+    <div class="geofence-item">
+      <div class="geofence-item-info">
+        <div class="geofence-item-name">${g.name}</div>
+        <div class="geofence-item-radius">${g.radius}m · ${Number(g.lat).toFixed(4)}, ${Number(g.lng).toFixed(4)}</div>
+      </div>
+      <button class="geofence-item-remove" onclick="removeGeofence(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function addGeofence() {
+  const name = document.getElementById('geofence-name').value.trim();
+  const lat = parseFloat(document.getElementById('geofence-lat').value);
+  const lng = parseFloat(document.getElementById('geofence-lng').value);
+  const radius = parseInt(document.getElementById('geofence-radius').value);
+
+  if (!name) { showToast('Inserisci un nome'); return; }
+  if (isNaN(lat) || isNaN(lng)) { showToast('Coordinate non valide'); return; }
+  if (isNaN(radius) || radius < 50) { showToast('Raggio minimo 50m'); return; }
+
+  geofences.push({ name, lat, lng, radius });
+  localStorage.setItem('orizon_geofences', JSON.stringify(geofences));
+
+  document.getElementById('geofence-name').value = '';
+  document.getElementById('geofence-lat').value = '';
+  document.getElementById('geofence-lng').value = '';
+  document.getElementById('geofence-radius').value = '';
+
+  renderGeofenceList();
+  showToast('Geofence aggiunto ✓');
+}
+
+function removeGeofence(idx) {
+  geofences.splice(idx, 1);
+  localStorage.setItem('orizon_geofences', JSON.stringify(geofences));
+  renderGeofenceList();
+  showToast('Geofence rimosso');
+}
+
+function useCurrentPositionForGeofence() {
+  if (myMarker) {
+    const ll = myMarker.getLatLng();
+    document.getElementById('geofence-lat').value = ll.lat.toFixed(6);
+    document.getElementById('geofence-lng').value = ll.lng.toFixed(6);
+    showToast('Coordinate impostate');
+  } else {
+    showToast('Posizione non disponibile');
+  }
+}
+
+function checkGeofences() {
+  if (!geofences.length || !contacts.length) return;
+
+  contacts.forEach(contact => {
+    const marker = contactMarkers[contact.id];
+    if (!marker) return;
+    const contactPos = marker.getLatLng();
+
+    geofences.forEach(fence => {
+      const dist = calcDistMeters(contactPos, { lat: fence.lat, lng: fence.lng });
+      const key = `${contact.id}_${fence.name}`;
+      const wasInside = geofenceStates[key] || false;
+      const isInside = dist <= fence.radius;
+
+      if (isInside && !wasInside) {
+        showToast(`📍 ${contact.display_name} è entrato in "${fence.name}"`);
+      } else if (!isInside && wasInside) {
+        showToast(`📍 ${contact.display_name} è uscito da "${fence.name}"`);
+      }
+      geofenceStates[key] = isInside;
+    });
+  });
+}
+
+function calcDistMeters(a, b) {
+  const R = 6371000;
+  const dLat = (b.lat - a.lat) * Math.PI / 180;
+  const dLng = (b.lng - a.lng) * Math.PI / 180;
+  const x = Math.sin(dLat/2)**2 + Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
+}
+
+// ─── IL MONDO ORIZON ─────────────────────────────────────
+function openOrizonWorld() {
+  closeSettings();
+  document.getElementById('orizon-world-modal').classList.add('open');
+}
+
+function closeOrizonWorld() {
+  document.getElementById('orizon-world-modal').classList.remove('open');
 }
 
 // ─── SERVICE WORKER ──────────────────────────────────────
