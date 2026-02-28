@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "public": true,
+  "buildCommand": "",
+  "outputDirectory": "public",
+  "routes": [
+    {
+      "src": "/sw.js",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Service-Worker-Allowed": "/"
+      },
+      "dest": "/sw.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
