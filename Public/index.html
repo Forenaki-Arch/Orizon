@@ -1254,15 +1254,15 @@
     .my-marker {
       width: 16px; height: 16px;
       border-radius: 50%;
-      background: var(--accent);
+      background: var(--green);
       border: 3px solid #fff;
-      box-shadow: 0 0 20px var(--accent-glow);
+      box-shadow: 0 0 20px var(--green-glow);
     }
     .pulse-ring {
       position: absolute;
       width: 40px; height: 40px;
       border-radius: 50%;
-      border: 2px solid var(--accent);
+      border: 2px solid var(--green);
       animation: expand 2s ease-out infinite;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
@@ -1526,6 +1526,173 @@
     }
     .tip-item:last-child { border-bottom: none; }
     .tip-num { color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+    /* ══ OVERRIDES: LAYOUT RESTRUCTURING ══════════════════ */
+
+    /* Top bar: 3-column grid for centered title */
+    .top-bar {
+      display: grid !important;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+    }
+    .top-bar .profile-chip { justify-self: start; }
+    .top-bar .app-name { justify-self: center; }
+    .top-bar .hamburger-btn { justify-self: end; }
+
+    /* Sidebar: open from RIGHT */
+    .sidebar {
+      left: auto !important;
+      right: 0 !important;
+      border-right: none !important;
+      border-left: 1px solid var(--border) !important;
+      transform: translateX(100%) !important;
+    }
+    .sidebar.open { transform: translateX(0) !important; }
+
+    /* Hide FABs completely */
+    .fab-container { display: none !important; }
+
+    /* ══ VISIBILITY MODAL ════════════════════════════════ */
+    .vis-options { display: flex; flex-direction: column; gap: 8px; }
+    .vis-radio-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 14px;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .vis-radio-item:hover { border-color: rgba(99,179,255,0.25); }
+    .vis-radio-item.selected { border-color: var(--accent); background: rgba(59,130,246,0.08); }
+    .vis-radio-item input[type="radio"] { display: none; }
+    .vis-radio-dot {
+      width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+      position: relative;
+    }
+    .vis-radio-dot.green { background: var(--green); box-shadow: 0 0 10px var(--green-glow); }
+    .vis-radio-dot.red { background: var(--red); box-shadow: 0 0 10px rgba(239,68,68,0.4); }
+    .vis-radio-dot.orange { background: var(--orange); box-shadow: 0 0 10px var(--orange-glow); }
+    .vis-radio-dot::after {
+      content: ''; position: absolute; inset: 0; border-radius: 50%;
+      animation: vis-pulse 2s ease-in-out infinite;
+    }
+    @keyframes vis-pulse {
+      0%,100% { box-shadow: 0 0 0 0 currentColor; opacity: 0.6; }
+      50% { box-shadow: 0 0 0 6px currentColor; opacity: 0; }
+    }
+    .vis-radio-dot.green::after { color: var(--green); }
+    .vis-radio-dot.red::after { color: var(--red); }
+    .vis-radio-dot.orange::after { color: var(--orange); }
+    .vis-radio-text { flex: 1; }
+    .vis-radio-label { font-weight: 700; font-size: 0.88rem; }
+    .vis-radio-sub { font-family: var(--mono); font-size: 0.6rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* Custom users checklist */
+    .custom-user-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 12px;
+      cursor: pointer; transition: all var(--transition);
+      margin-bottom: 6px;
+    }
+    .custom-user-item:hover { border-color: rgba(99,179,255,0.25); }
+    .custom-user-item.checked { border-color: var(--accent); background: rgba(59,130,246,0.08); }
+    .custom-user-item input[type="checkbox"] { display: none; }
+    .custom-user-check {
+      width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0;
+      border: 2px solid var(--border); display: flex; align-items: center;
+      justify-content: center; transition: all 0.2s;
+    }
+    .custom-user-item.checked .custom-user-check {
+      background: var(--accent); border-color: var(--accent);
+    }
+    .custom-user-check svg { width: 12px; height: 12px; fill: #fff; opacity: 0; transition: opacity 0.2s; }
+    .custom-user-item.checked .custom-user-check svg { opacity: 1; }
+    .custom-user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.8rem; color: #fff; flex-shrink: 0;
+    }
+    .custom-user-name { font-weight: 600; font-size: 0.85rem; }
+
+    /* ══ PROFILE PICTURE ═════════════════════════════════ */
+    .settings-avatar-wrapper {
+      position: relative; width: 64px; height: 64px; margin: 0 auto 8px;
+      cursor: pointer;
+    }
+    .settings-avatar-wrapper:hover .settings-avatar-overlay { opacity: 1; }
+    .settings-avatar-img {
+      width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+      background: var(--accent); display: flex; align-items: center;
+      justify-content: center; font-size: 1.5rem; font-weight: 800; color: #fff;
+      border: 2px solid var(--border);
+    }
+    .settings-avatar-overlay {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: rgba(0,0,0,0.5); display: flex; align-items: center;
+      justify-content: center; opacity: 0; transition: opacity 0.2s;
+    }
+    .settings-avatar-overlay svg { width: 22px; height: 22px; fill: #fff; }
+    .profile-chip-avatar { position: relative; overflow: hidden; }
+    .profile-chip-avatar img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      border-radius: 50%; object-fit: cover;
+    }
+
+    /* ══ GPS POINTER — PULSING & NEVER BLUE ══════════════ */
+    .my-marker {
+      background: var(--green) !important;
+      border: 3px solid #fff;
+      box-shadow: 0 0 20px var(--green-glow) !important;
+    }
+    .my-marker.vis-none {
+      background: var(--red) !important;
+      box-shadow: 0 0 20px rgba(239,68,68,0.4) !important;
+    }
+    .my-marker.vis-custom {
+      background: var(--orange) !important;
+      box-shadow: 0 0 20px var(--orange-glow) !important;
+    }
+    .pulse-ring {
+      border-color: var(--green) !important;
+      animation: gps-pulse 2s ease-out infinite !important;
+    }
+    .pulse-ring.vis-none {
+      border-color: var(--red) !important;
+    }
+    .pulse-ring.vis-custom {
+      border-color: var(--orange) !important;
+    }
+    @keyframes gps-pulse {
+      0% { width: 16px; height: 16px; opacity: 0.8; }
+      100% { width: 60px; height: 60px; opacity: 0; }
+    }
+    .my-marker-arrow {
+      border-bottom-color: var(--green) !important;
+      filter: drop-shadow(0 0 8px var(--green-glow)) !important;
+    }
+    .my-marker-arrow.vis-none {
+      border-bottom-color: var(--red) !important;
+      filter: drop-shadow(0 0 8px rgba(239,68,68,0.4)) !important;
+    }
+    .my-marker-arrow.vis-custom {
+      border-bottom-color: var(--orange) !important;
+      filter: drop-shadow(0 0 8px var(--orange-glow)) !important;
+    }
+
+    /* Tracking dot pulsing for all states */
+    .tracking-dot { animation: gps-dot-pulse 2s ease-in-out infinite !important; }
+    @keyframes gps-dot-pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .tracking-dot.vis-none {
+      background: var(--red) !important;
+      box-shadow: 0 0 10px var(--red) !important;
+    }
+    .tracking-dot.vis-custom {
+      background: var(--orange) !important;
+      box-shadow: 0 0 10px var(--orange) !important;
+    }
+    .tracking-dot.vis-all {
+      background: var(--green) !important;
+      box-shadow: 0 0 10px var(--green) !important;
+    }
   </style>
 </head>
 <body>
@@ -1593,20 +1760,16 @@
 
   <!-- Top Bar -->
   <div class="top-bar">
-    <div style="display:flex;align-items:center;gap:10px">
-      <div class="hamburger-btn" onclick="openSidebar()" title="Menu Cerchia">
-        <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-      </div>
-      <div class="app-name">
-        <div class="dot" id="tracking-dot"></div>
-        <span class="orizon-title">Orizon</span>
-      </div>
+    <div class="profile-chip" onclick="openSettings()">
+      <div class="profile-chip-avatar" id="profile-avatar"><span id="profile-avatar-letter">?</span></div>
+      <span class="profile-chip-name" id="profile-name">...</span>
     </div>
-    <div class="top-actions">
-      <div class="profile-chip" onclick="openSettings()">
-        <div class="profile-chip-avatar" id="profile-avatar">?</div>
-        <span class="profile-chip-name" id="profile-name">...</span>
-      </div>
+    <div class="app-name">
+      <div class="dot tracking-dot vis-all" id="tracking-dot"></div>
+      <span class="orizon-title">Orizon</span>
+    </div>
+    <div class="hamburger-btn" onclick="openSidebar()" title="Menu Cerchia">
+      <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
     </div>
   </div>
 
@@ -1628,15 +1791,7 @@
     <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
   </div>
 
-  <!-- FABs -->
-  <div class="fab-container" id="fab-container">
-    <div class="fab fab-add" onclick="openQRModal()" title="Aggiungi contatto">
-      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-    </div>
-    <div class="fab fab-visibility" id="visibility-fab" onclick="toggleVisibility()" title="Cambia visibilità">
-      <svg viewBox="0 0 24 24" id="vis-icon"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-    </div>
-  </div>
+  <!-- FABs removed — functions consolidated in sidebar -->
 
   <!-- Contacts Panel -->
   <div class="contacts-panel" id="contacts-panel">
@@ -1687,9 +1842,9 @@
       <svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
       Modalità freccia
     </div>
-    <div class="sidebar-item" onclick="closeSidebar();toggleVisibility()">
+    <div class="sidebar-item" id="sidebar-visibility-item" onclick="closeSidebar();openVisibilityModal()">
       <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-      Cambia visibilità
+      <span id="sidebar-vis-label">Chi può vederti</span>
     </div>
     <div class="sidebar-item" onclick="closeSidebar();openOrizonWorld()">
       <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
@@ -1820,6 +1975,13 @@
     </div>
     <div class="settings-group">
       <div class="settings-group-label">Profilo</div>
+      <div class="settings-avatar-wrapper" onclick="document.getElementById('avatar-file-input').click()" title="Cambia foto profilo">
+        <div class="settings-avatar-img" id="settings-avatar-img"><span id="settings-avatar-letter">?</span></div>
+        <div class="settings-avatar-overlay">
+          <svg viewBox="0 0 24 24"><path d="M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2-1.43-3.2-3.2-3.2-3.2 1.43-3.2 3.2z"/></svg>
+        </div>
+        <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)" />
+      </div>
       <div class="settings-item" style="cursor:default">
         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         <div class="settings-item-text">
@@ -1891,7 +2053,7 @@
       <div class="settings-group-label">Tips &amp; Tricks</div>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px">
         <div class="tip-item"><span class="tip-num">01</span> Premi la freccia (→) nella barra destra per attivare la modalità direzione: il tuo punto diventa una freccia che segue il tuo sguardo grazie al giroscopio.</div>
-        <div class="tip-item"><span class="tip-num">02</span> Tocca il FAB verde/arancione/rosso per cambiare la tua visibilità: Verde = visibile a tutti, Arancione = modalità parziale, Rosso = fantasma (invisibile).</div>
+        <div class="tip-item"><span class="tip-num">02</span> Apri il menu laterale e tocca "Chi può vederti" per gestire la visibilità: Verde = visibile a tutti, Arancione = utenti specifici, Rosso = invisibile.</div>
         <div class="tip-item"><span class="tip-num">03</span> Aggiungi un contatto scansionando il suo QR code o mostrando il tuo. Nessuna email, nessun numero di telefono richiesto.</div>
         <div class="tip-item"><span class="tip-num">04</span> Tocca un contatto nella lista per navigare verso di lui con Google Maps.</div>
         <div class="tip-item"><span class="tip-num">05</span> Usa l'icona 🚫 su un contatto per nasconderlo dalla mappa senza rimuoverlo dalla cerchia.</div>
@@ -1908,6 +2070,47 @@
           <div class="orizon-world-text">• Le coordinate GPS sono cifrate in transito via HTTPS/TLS.<br/>• Nessun dato viene venduto o condiviso con terzi.<br/>• Puoi diventare "fantasma" in qualsiasi momento.<br/>• Le connessioni richiedono conferma reciproca tramite QR.<br/>• Puoi eliminare il tuo account e tutti i dati in qualsiasi momento.</div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- VISIBILITY MODAL -->
+<div class="modal-overlay" id="visibility-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="vis-modal-title">Chi può vederti</div>
+      <div class="close-btn" onclick="closeVisibilityModal()">✕</div>
+    </div>
+    <div class="vis-options">
+      <label class="vis-radio-item selected" id="vis-opt-all" onclick="setVisibility('all')">
+        <input type="radio" name="visibility" value="all" checked />
+        <div class="vis-radio-dot green"></div>
+        <div class="vis-radio-text">
+          <div class="vis-radio-label">Tutti</div>
+          <div class="vis-radio-sub">Tutti nella tua cerchia possono vederti</div>
+        </div>
+      </label>
+      <label class="vis-radio-item" id="vis-opt-none" onclick="setVisibility('none')">
+        <input type="radio" name="visibility" value="none" />
+        <div class="vis-radio-dot red"></div>
+        <div class="vis-radio-text">
+          <div class="vis-radio-label">Nessuno</div>
+          <div class="vis-radio-sub">Sei completamente invisibile</div>
+        </div>
+      </label>
+      <label class="vis-radio-item" id="vis-opt-custom" onclick="setVisibility('custom')">
+        <input type="radio" name="visibility" value="custom" />
+        <div class="vis-radio-dot orange"></div>
+        <div class="vis-radio-text">
+          <div class="vis-radio-label">Scegli chi può vederti</div>
+          <div class="vis-radio-sub" id="vis-custom-sub">Seleziona utenti specifici</div>
+        </div>
+      </label>
+    </div>
+    <div id="custom-users-list" style="display:none">
+      <div class="settings-group-label" style="margin-bottom:8px">Seleziona utenti dalla tua cerchia</div>
+      <div id="custom-users-container"></div>
     </div>
   </div>
 </div>
@@ -1933,7 +2136,7 @@ let map = null;
 let myMarker = null;
 let myPulse = null;
 let contactMarkers = {};
-let visState = 'on'; // 'on' | 'partial' | 'ghost'
+let visState = 'all'; // 'all' | 'none' | 'custom'
 let isVisible = true;
 let panelOpen = false;
 let sidebarOpen = false;
@@ -1951,6 +2154,8 @@ let navTargetLat = null;
 let navTargetLng = null;
 let ghostTileLayer = null;
 let darkTileLayer = null;
+let visibleToUsers = []; // user IDs for custom visibility
+let profilePicUrl = null; // cached avatar URL
 
 // ─── INIT ────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
@@ -2091,6 +2296,22 @@ function openSettings() {
   const email = userProfile?.email || currentUser?.email || '—';
   document.getElementById('settings-name').textContent = name;
   document.getElementById('settings-email').textContent = email;
+
+  // Update settings avatar
+  const avatarUrl = userProfile?.avatar_url || profilePicUrl;
+  const settingsAvatarEl = document.getElementById('settings-avatar-img');
+  const settingsLetterEl = document.getElementById('settings-avatar-letter');
+  if (avatarUrl) {
+    settingsAvatarEl.style.backgroundImage = `url(${avatarUrl})`;
+    settingsAvatarEl.style.backgroundSize = 'cover';
+    settingsAvatarEl.style.backgroundPosition = 'center';
+    settingsLetterEl.style.display = 'none';
+  } else {
+    settingsAvatarEl.style.backgroundImage = '';
+    settingsLetterEl.style.display = '';
+    settingsLetterEl.textContent = name[0]?.toUpperCase() || '?';
+  }
+
   document.getElementById('settings-modal').classList.add('open');
 }
 function closeSettings() {
@@ -2112,6 +2333,7 @@ async function loadUserProfile() {
     data = { id: currentUser.id, display_name: name, email: currentUser.email };
   }
   userProfile = data;
+  profilePicUrl = data.avatar_url || null;
 }
 
 // ─── MAP SCREEN ──────────────────────────────────────────
@@ -2123,7 +2345,15 @@ function showMapScreen() {
   const name = userProfile?.display_name || currentUser.email.split('@')[0];
   const email = userProfile?.email || currentUser?.email || '';
   document.getElementById('profile-name').textContent = name.split(' ')[0];
-  document.getElementById('profile-avatar').textContent = name[0].toUpperCase();
+  // Profile avatar: show pic or letter
+  const avatarUrl = userProfile?.avatar_url || profilePicUrl;
+  const profileAvatarEl = document.getElementById('profile-avatar');
+  const profileLetterEl = document.getElementById('profile-avatar-letter');
+  if (avatarUrl) {
+    profileAvatarEl.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" />`;
+  } else {
+    profileLetterEl.textContent = name[0].toUpperCase();
+  }
   // Update sidebar profile
   document.getElementById('sidebar-avatar').textContent = name[0].toUpperCase();
   document.getElementById('sidebar-name').textContent = name;
@@ -2165,13 +2395,14 @@ function initMap() {
 function createMyMarker(lat, lng) {
   if (myMarker) { myMarker.setLatLng([lat, lng]); return; }
 
+  const visClass = visState === 'none' ? ' vis-none' : visState === 'custom' ? ' vis-custom' : '';
   const el = document.createElement('div');
   if (compassMode) {
     el.style.cssText = 'position:relative;width:16px;height:24px;';
-    el.innerHTML = `<div class="my-marker-arrow${visState === 'partial' ? ' vis-partial' : visState === 'ghost' ? ' vis-ghost' : ''}"></div>`;
+    el.innerHTML = `<div class="my-marker-arrow${visClass}"></div>`;
   } else {
     el.style.cssText = 'position:relative;width:16px;height:16px;';
-    el.innerHTML = `<div class="my-marker"></div><div class="pulse-ring"></div>`;
+    el.innerHTML = `<div class="my-marker${visClass}"></div><div class="pulse-ring${visClass}"></div>`;
   }
 
   myMarker = L.marker([lat, lng], {
@@ -2200,8 +2431,12 @@ function updateContactMarker(contact, lat, lng) {
   el.className = 'user-marker';
   el.style.background = color;
   el.style.color = '#fff';
-  el.textContent = initial;
   el.title = name;
+  if (contact.avatar_url) {
+    el.innerHTML = `<img src="${contact.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" />`;
+  } else {
+    el.textContent = initial;
+  }
   el.onclick = () => {
     map.flyTo([lat, lng], 16, { duration: 1 });
     openNavModal(name, lat, lng);
@@ -2259,52 +2494,138 @@ function stopGeolocation() {
   }
 }
 
-// ─── VISIBILITY (3 states: on → partial → ghost) ──────────
-async function toggleVisibility() {
-  // Cycle through: on → partial → ghost → on
-  const states = ['on', 'partial', 'ghost'];
-  visState = states[(states.indexOf(visState) + 1) % states.length];
-  isVisible = visState === 'on';
+// ─── VISIBILITY MODAL ─────────────────────────────────────
+function openVisibilityModal() {
+  // Update radio selection to current state
+  document.querySelectorAll('.vis-radio-item').forEach(el => el.classList.remove('selected'));
+  if (visState === 'all') document.getElementById('vis-opt-all').classList.add('selected');
+  else if (visState === 'none') document.getElementById('vis-opt-none').classList.add('selected');
+  else document.getElementById('vis-opt-custom').classList.add('selected');
 
-  const fab = document.getElementById('visibility-fab');
-  const icon = document.getElementById('vis-icon');
+  // Show/hide custom users list
+  document.getElementById('custom-users-list').style.display = visState === 'custom' ? 'block' : 'none';
+  if (visState === 'custom') renderCustomUsersList();
+
+  document.getElementById('visibility-modal').classList.add('open');
+}
+function closeVisibilityModal() {
+  document.getElementById('visibility-modal').classList.remove('open');
+}
+
+async function setVisibility(mode) {
+  visState = mode;
+  isVisible = mode !== 'none';
+
+  // Update radio UI
+  document.querySelectorAll('.vis-radio-item').forEach(el => el.classList.remove('selected'));
+  document.getElementById(`vis-opt-${mode}`).classList.add('selected');
+
   const dot = document.getElementById('tracking-dot');
+  dot.classList.remove('vis-all', 'vis-none', 'vis-custom');
 
-  fab.classList.remove('vis-off', 'vis-partial', 'vis-ghost', 'off');
-  dot.classList.remove('vis-off', 'hidden-dot', 'vis-partial', 'vis-ghost');
-
-  const SVG_EYE = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
-  const SVG_EYE_HALF = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zm-9.89-1.3l2.12 2.12C2.84 9.1 2.12 10.5 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2.11 5.7zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2z"/>';
-  const SVG_GHOST = '<path d="M12 2C7.58 2 4 5.58 4 10v12l3-3 2.5 3L12 19l2.5 3L17 19l3 3V10c0-4.42-3.58-8-8-8zm-3 9c-.83 0-1.5-.67-1.5-1.5S8.17 8 9 8s1.5.67 1.5 1.5S9.83 11 9 11zm6 0c-.83 0-1.5-.67-1.5-1.5S14.17 8 15 8s1.5.67 1.5 1.5S15.83 11 15 11z"/>';
-
-  if (visState === 'on') {
-    icon.innerHTML = SVG_EYE;
+  if (mode === 'all') {
+    dot.classList.add('vis-all');
+    document.getElementById('custom-users-list').style.display = 'none';
+    document.getElementById('sidebar-vis-label').textContent = 'Chi può vederti';
     showToast('🟢 Posizione visibile a tutti');
-  } else if (visState === 'partial') {
-    fab.classList.add('vis-partial');
-    dot.classList.add('vis-partial');
-    icon.innerHTML = SVG_EYE_HALF;
-    showToast('🟠 Visibilità limitata (modalità parziale)');
+  } else if (mode === 'none') {
+    dot.classList.add('vis-none');
+    document.getElementById('custom-users-list').style.display = 'none';
+    document.getElementById('sidebar-vis-label').textContent = 'Chi può vederti';
+    showToast('🔴 Sei invisibile a tutti');
   } else {
-    fab.classList.add('vis-ghost');
-    dot.classList.add('vis-ghost');
-    icon.innerHTML = SVG_GHOST;
-    showToast('🔴 Modalità Fantasma — sei invisibile');
+    dot.classList.add('vis-custom');
+    document.getElementById('custom-users-list').style.display = 'block';
+    renderCustomUsersList();
+    updateCustomVisLabel();
+    showToast('🟠 Visibilità personalizzata');
   }
 
-  // Update arrow marker color if in compass mode
-  if (myMarker) {
-    const el = myMarker.getElement();
-    const arrow = el && el.querySelector('.my-marker-arrow');
-    if (arrow) {
-      arrow.classList.remove('vis-partial', 'vis-ghost');
-      if (visState === 'partial') arrow.classList.add('vis-partial');
-      if (visState === 'ghost') arrow.classList.add('vis-ghost');
-    }
-  }
+  // Update GPS marker colors
+  updateMarkerVisState();
 
   await db.from('locations').update({ is_visible: isVisible })
     .eq('user_id', currentUser.id);
+}
+
+function updateMarkerVisState() {
+  if (!myMarker) return;
+  const el = myMarker.getElement();
+  if (!el) return;
+
+  const visClass = visState === 'none' ? 'vis-none' : visState === 'custom' ? 'vis-custom' : '';
+
+  // Update dot marker
+  const dot = el.querySelector('.my-marker');
+  if (dot) {
+    dot.classList.remove('vis-none', 'vis-custom');
+    if (visClass) dot.classList.add(visClass);
+  }
+  const pulse = el.querySelector('.pulse-ring');
+  if (pulse) {
+    pulse.classList.remove('vis-none', 'vis-custom');
+    if (visClass) pulse.classList.add(visClass);
+  }
+
+  // Update arrow marker
+  const arrow = el.querySelector('.my-marker-arrow');
+  if (arrow) {
+    arrow.classList.remove('vis-none', 'vis-custom');
+    if (visClass) arrow.classList.add(visClass);
+  }
+}
+
+function renderCustomUsersList() {
+  const container = document.getElementById('custom-users-container');
+  if (contacts.length === 0) {
+    container.innerHTML = '<div style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);text-align:center;padding:16px">Nessun contatto nella cerchia</div>';
+    return;
+  }
+  const colors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981'];
+  container.innerHTML = contacts.map(c => {
+    const initial = (c.display_name || '?')[0].toUpperCase();
+    const color = colors[(c.display_name || '').charCodeAt(0) % colors.length];
+    const checked = visibleToUsers.includes(c.id);
+    return `
+      <label class="custom-user-item ${checked ? 'checked' : ''}" onclick="toggleCustomUser('${c.id}', this)">
+        <input type="checkbox" ${checked ? 'checked' : ''} />
+        <div class="custom-user-check"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+        <div class="custom-user-avatar" style="background:${color}">${initial}</div>
+        <div class="custom-user-name">${c.display_name || c.email}</div>
+      </label>
+    `;
+  }).join('');
+}
+
+function toggleCustomUser(userId, el) {
+  if (visibleToUsers.includes(userId)) {
+    visibleToUsers = visibleToUsers.filter(id => id !== userId);
+  } else {
+    visibleToUsers.push(userId);
+  }
+  // Re-render to update checked state
+  setTimeout(() => {
+    renderCustomUsersList();
+    updateCustomVisLabel();
+  }, 10);
+}
+
+function updateCustomVisLabel() {
+  const total = contacts.length;
+  const selected = visibleToUsers.length;
+  const modalTitle = document.getElementById('vis-modal-title');
+  const sidebarLabel = document.getElementById('sidebar-vis-label');
+  const customSub = document.getElementById('vis-custom-sub');
+
+  if (selected > 0) {
+    modalTitle.textContent = `Chi può vederti: ${selected} Utenti`;
+    sidebarLabel.textContent = `Chi può vederti: ${selected}/${total} Utenti`;
+    customSub.textContent = `${selected} utenti selezionati su ${total}`;
+  } else {
+    modalTitle.textContent = 'Chi può vederti';
+    sidebarLabel.textContent = 'Chi può vederti';
+    customSub.textContent = 'Seleziona utenti specifici';
+  }
 }
 
 // ─── CONTACTS ────────────────────────────────────────────
@@ -2390,7 +2711,7 @@ function renderContactsList(locations) {
     return `
       <div class="contact-card" onclick="flyToContact('${c.id}', ${loc?.lat || 0}, ${loc?.lng || 0}, ${isOnline})">
         <div class="contact-avatar" style="background:${color}">
-          ${initial}
+          ${c.avatar_url ? `<img src="${c.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;position:absolute;inset:0" />` : initial}
           <div class="status-dot ${isOnline ? 'online' : 'offline'}"></div>
         </div>
         <div class="contact-info">
@@ -2483,12 +2804,16 @@ function subscribeRealtime() {
       // Scanner: their pending request was accepted by the shower
       if (conn.user_a === currentUser.id && conn.status === 'accepted') {
         closeQRWaitModal();
-        showToast('✓ Connessione accettata!');
+        closeQRModal();
+        // Get the name of the other user
+        const otherName = pendingConnection?.name || 'utente';
+        showToast('Hai aggiunto ' + otherName + ' alla tua cerchia.');
         loadContacts();
       }
       // Scanner: their request was rejected
       if (conn.user_a === currentUser.id && conn.status === 'rejected') {
         closeQRWaitModal();
+        closeQRModal();
         showToast('Richiesta rifiutata');
       }
     })
@@ -2632,12 +2957,13 @@ function closeQRWaitModal() {
 async function acceptIncomingRequest() {
   if (!pendingConnection) return;
   document.getElementById('confirm-modal').classList.remove('open');
+  closeQRModal(); // auto-close QR modal on match
 
   await db.from('connections')
     .update({ status: 'accepted' })
     .eq('id', pendingConnection.connId);
 
-  showToast('✓ ' + pendingConnection.name + ' aggiunto!');
+  showToast('Hai aggiunto ' + pendingConnection.name + ' alla tua cerchia.');
   pendingConnection = null;
   await loadContacts();
 }
@@ -2833,6 +3159,96 @@ function showToast(msg) {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── PROFILE PICTURE UPLOAD ──────────────────────────────
+async function handleAvatarUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Validate file
+  if (!file.type.startsWith('image/')) {
+    showToast('Seleziona un file immagine valido');
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('Immagine troppo grande (max 5MB)');
+    return;
+  }
+
+  showToast('Caricamento foto profilo...');
+
+  try {
+    // Resize image to max 256x256 and convert to base64
+    const dataUrl = await resizeImage(file, 256);
+
+    // Try uploading to Supabase Storage
+    const ext = file.name.split('.').pop() || 'jpg';
+    const filePath = `avatars/${currentUser.id}.${ext}`;
+
+    const { error: uploadError } = await db.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true, contentType: file.type });
+
+    let avatarUrl = dataUrl; // fallback to base64
+    if (!uploadError) {
+      const { data: urlData } = db.storage.from('avatars').getPublicUrl(filePath);
+      if (urlData?.publicUrl) avatarUrl = urlData.publicUrl + '?t=' + Date.now();
+    }
+
+    // Update profile in DB
+    await db.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
+    userProfile.avatar_url = avatarUrl;
+    profilePicUrl = avatarUrl;
+
+    // Update all avatar displays
+    updateAllAvatars(avatarUrl);
+    showToast('Foto profilo aggiornata!');
+  } catch (err) {
+    showToast('Errore nel caricamento: ' + (err.message || 'riprova'));
+  }
+}
+
+function resizeImage(file, maxSize) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
+        else { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function updateAllAvatars(url) {
+  // Profile chip in top bar
+  const profileAvatarEl = document.getElementById('profile-avatar');
+  if (profileAvatarEl) {
+    profileAvatarEl.innerHTML = `<img src="${url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" />`;
+  }
+  // Settings avatar
+  const settingsAvatarEl = document.getElementById('settings-avatar-img');
+  const settingsLetterEl = document.getElementById('settings-avatar-letter');
+  if (settingsAvatarEl) {
+    settingsAvatarEl.style.backgroundImage = `url(${url})`;
+    settingsAvatarEl.style.backgroundSize = 'cover';
+    settingsAvatarEl.style.backgroundPosition = 'center';
+    if (settingsLetterEl) settingsLetterEl.style.display = 'none';
+  }
+  // Sidebar avatar
+  const sidebarAvatarEl = document.getElementById('sidebar-avatar');
+  if (sidebarAvatarEl) {
+    sidebarAvatarEl.innerHTML = `<img src="${url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" />`;
+  }
 }
 
 // ─── SERVICE WORKER ──────────────────────────────────────
