@@ -2898,6 +2898,12 @@ function showToast(msg) {
 }
 
 // ─── SIDEBAR ─────────────────────────────────────────────
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
 function openSidebar() {
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebar-overlay').classList.add('open');
@@ -2923,13 +2929,14 @@ function renderSidebarContacts() {
   }
   const colors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981'];
   list.innerHTML = contacts.map(c => {
-    const initial = (c.display_name || '?')[0].toUpperCase();
+    const initial = escHtml((c.display_name || '?')[0].toUpperCase());
     const color = colors[(c.display_name || '').charCodeAt(0) % colors.length];
+    const name = escHtml(c.display_name || c.email);
     return `
       <div class="sidebar-contact" onclick="closeSidebar();flyToContact('${c.id}',0,0,true)">
         <div class="sidebar-contact-avatar" style="background:${color}">${initial}</div>
         <div>
-          <div class="sidebar-contact-name">${c.display_name || c.email}</div>
+          <div class="sidebar-contact-name">${name}</div>
         </div>
       </div>`;
   }).join('');
@@ -3022,7 +3029,7 @@ function renderGeofenceList() {
   list.innerHTML = geofences.map((g, i) => `
     <div class="geofence-item">
       <div class="geofence-item-info">
-        <div class="geofence-item-name">${g.name}</div>
+        <div class="geofence-item-name">${escHtml(g.name)}</div>
         <div class="geofence-item-radius">${g.radius}m · ${Number(g.lat).toFixed(4)}, ${Number(g.lng).toFixed(4)}</div>
       </div>
       <button class="geofence-item-remove" onclick="removeGeofence(${i})">✕</button>
@@ -3039,6 +3046,7 @@ function addGeofence() {
   if (!name) { showToast('Inserisci un nome'); return; }
   if (isNaN(lat) || isNaN(lng)) { showToast('Coordinate non valide'); return; }
   if (isNaN(radius) || radius < 50) { showToast('Raggio minimo 50m'); return; }
+  if (radius > 50000) { showToast('Raggio massimo 50km'); return; }
 
   geofences.push({ name, lat, lng, radius });
   localStorage.setItem('orizon_geofences', JSON.stringify(geofences));
