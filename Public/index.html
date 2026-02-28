@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0f1e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Orizon" />
+  <title>Orizon — Find Your Circle</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+  <!-- QRCode.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- jsQR for scanning -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
+
+    :root {
+      --bg: #040812;
+      --surface: #0c1428;
+      --surface2: #121e38;
+      --border: rgba(99,179,255,0.12);
+      --accent: #3b82f6;
+      --accent-glow: rgba(59,130,246,0.4);
+      --green: #22c55e;
+      --red: #ef4444;
+      --text: #e2eeff;
+      --text-muted: #5a7aaa;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Syne', sans-serif;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      overflow: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ─── SCREENS ─────────────────────────────────────── */
+    .screen {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px;
+      transition: opacity 0.35s, transform 0.35s;
+      z-index: 10;
+    }
+    .screen.hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
+
+    /* ─── AUTH SCREEN ─────────────────────────────────── */
+    #auth-screen {
+      background: var(--bg);
+      gap: 32px;
+    }
+    .logo {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .logo-mark {
+      width: 72px; height: 72px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 40px var(--accent-glow), inset 0 0 30px rgba(59,130,246,0.08);
+      position: relative;
+      animation: pulse-ring 3s ease-in-out infinite;
+    }
+    @keyframes pulse-ring {
+      0%, 100% { box-shadow: 0 0 40px var(--accent-glow), inset 0 0 30px rgba(59,130,246,0.08); }
+      50% { box-shadow: 0 0 80px var(--accent-glow), inset 0 0 50px rgba(59,130,246,0.15); }
+    }
+    .logo-mark::before {
+      content: '';
+      position: absolute;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(99,179,255,0.3);
+      animation: spin 8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .logo-mark svg { width: 28px; height: 28px; fill: var(--accent); }
+    .logo h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; }
+    .logo p { font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; }
+
+    .auth-form { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; }
+    .input-group { display: flex; flex-direction: column; gap: 6px; }
+    .input-group label { font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .input-group input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    .input-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .btn {
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: none;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.01em;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 30px var(--accent-glow);
+    }
+    .btn-primary:active { transform: scale(0.97); box-shadow: 0 0 15px var(--accent-glow); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:active { background: var(--surface); }
+
+    .divider { text-align: center; font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted); }
+    .error-msg { font-family: var(--mono); font-size: 0.7rem; color: var(--red); text-align: center; min-height: 16px; }
+
+    /* ─── MAP SCREEN ──────────────────────────────────── */
+    #map-screen { padding: 0; background: transparent; }
+
+    #map {
+      position: fixed; inset: 0;
+      z-index: 1;
+    }
+
+    /* Leaflet tiles dark */
+    .leaflet-tile { filter: brightness(0.85) saturate(0.7) hue-rotate(200deg); }
+
+    /* ─── TOP BAR ─────────────────────────────────────── */
+    .top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: calc(var(--safe-top) + 12px) 16px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(4,8,18,0.95) 60%, transparent);
+      z-index: 100;
+    }
+    .app-name {
+      font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .app-name .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .top-actions { display: flex; gap: 8px; }
+    .icon-btn {
+      width: 40px; height: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(10px);
+    }
+    .icon-btn:active { transform: scale(0.9); }
+    .icon-btn svg { width: 18px; height: 18px; fill: var(--text); }
+
+    /* ─── FAB ─────────────────────────────────────────── */
+    .fab-container {
+      position: fixed;
+      bottom: calc(var(--safe-bottom) + 100px);
+      right: 20px;
+      z-index: 100;
+      display: flex; flex-direction: column; gap: 12px; align-items: flex-end;
+    }
+    .fab {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative;
+    }
+    .fab:active { transform: scale(0.9); }
+    .fab-visibility {
+      background: var(--green);
+      box-shadow: 0 0 30px rgba(34,197,94,0.5);
+    }
+    .fab-visibility.off {
+      background: var(--surface2);
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+    .fab-visibility svg { width: 24px; height: 24px; fill: #fff; }
+    .fab-add {
+      background: var(--accent);
+      box-shadow: 0 0 30px var(--accent-glow);
+      width: 48px; height: 48px;
+    }
+    .fab-add svg { width: 20px; height: 20px; fill: #fff; }
+
+    /* ─── CONTACTS PANEL ─────────────────────────────── */
+    .contacts-panel {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-radius: 24px 24px 0 0;
+      z-index: 90;
+      transform: translateY(calc(100% - 80px));
+      transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+      max-height: 75vh;
+      display: flex; flex-direction: column;
+      padding-bottom: var(--safe-bottom);
+    }
+    .contacts-panel.open { transform: translateY(0); }
+
+    .panel-handle {
+      width: 36px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 12px auto 0;
+      cursor: pointer;
+    }
+    .panel-header {
+      padding: 12px 20px 8px;
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer;
+    }
+    .panel-title {
+      font-size: 1rem; font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .contact-count {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 20px;
+      color: var(--text-muted);
+    }
+
+    .contacts-list {
+      overflow-y: auto;
+      padding: 0 16px 16px;
+      display: flex; flex-direction: column; gap: 8px;
+      flex: 1;
+    }
+    .contacts-list::-webkit-scrollbar { display: none; }
+
+    .contact-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px;
+      transition: all 0.2s;
+    }
+    .contact-card:active { opacity: 0.7; }
+
+    .contact-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1rem;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .status-dot {
+      position: absolute; bottom: -1px; right: -1px;
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 2px solid var(--surface2);
+    }
+    .status-dot.online { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .status-dot.offline { background: var(--text-muted); }
+
+    .contact-info { flex: 1; overflow: hidden; }
+    .contact-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 2px; }
+    .contact-dist { font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted); }
+
+    .locate-btn {
+      width: 34px; height: 34px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .locate-btn:active { background: var(--accent); border-color: var(--accent); }
+    .locate-btn svg { width: 14px; height: 14px; fill: var(--text-muted); }
+    .locate-btn:active svg { fill: #fff; }
+
+    .empty-contacts {
+      text-align: center; padding: 32px 16px;
+      font-family: var(--mono); font-size: 0.75rem; color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* ─── MODALS ─────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(4,8,18,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px 24px;
+      width: 100%; max-width: 360px;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-header { display: flex; align-items: center; justify-content: space-between; }
+    .modal-title { font-size: 1.2rem; font-weight: 800; }
+    .close-btn {
+      width: 32px; height: 32px;
+      background: var(--surface2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem; color: var(--text-muted);
+    }
+
+    /* QR Modal */
+    .qr-tabs { display: flex; gap: 8px; }
+    .qr-tab {
+      flex: 1; padding: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-align: center;
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--text-muted);
+      cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+    .qr-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    #qr-display { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+    #qr-scan { display: none; flex-direction: column; gap: 12px; }
+
+    #qrcode-container {
+      background: #fff;
+      padding: 16px;
+      border-radius: 16px;
+      display: inline-block;
+    }
+    #qrcode-container canvas, #qrcode-container img { display: block; }
+
+    .qr-hint { font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted); text-align: center; line-height: 1.6; }
+
+    #scan-video-container {
+      position: relative;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 1;
+    }
+    #scan-video { width: 100%; height: 100%; object-fit: cover; }
+    .scan-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .scan-frame {
+      width: 180px; height: 180px;
+      border: 2px solid var(--accent);
+      border-radius: 16px;
+      box-shadow: 0 0 0 1000px rgba(0,0,0,0.5);
+    }
+    .scan-line {
+      position: absolute; left: 50%; top: 50%;
+      width: 160px; height: 2px;
+      background: linear-gradient(to right, transparent, var(--accent), transparent);
+      transform: translate(-50%, -50%);
+      animation: scan-anim 2s ease-in-out infinite;
+    }
+    @keyframes scan-anim {
+      0% { margin-top: -80px; }
+      100% { margin-top: 80px; }
+    }
+    #scan-status { font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); text-align: center; }
+
+    /* Confirm modal */
+    .confirm-avatar {
+      width: 64px; height: 64px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin: 0 auto;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; font-weight: 800;
+      box-shadow: 0 0 30px var(--accent-glow);
+    }
+    .confirm-name { text-align: center; font-size: 1.1rem; font-weight: 700; }
+    .confirm-sub { text-align: center; font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted); }
+    .confirm-actions { display: flex; gap: 10px; }
+    .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+
+    /* Locate me btn */
+    .locate-me-btn {
+      position: fixed;
+      bottom: calc(var(--safe-bottom) + 170px);
+      left: 20px;
+      width: 44px; height: 44px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 100;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+    }
+    .locate-me-btn:active { background: var(--accent); border-color: var(--accent); }
+    .locate-me-btn svg { width: 18px; height: 18px; fill: var(--text); }
+
+    /* Notification toast */
+    .toast {
+      position: fixed;
+      top: calc(var(--safe-top) + 70px);
+      left: 50%; transform: translateX(-50%) translateY(-20px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-family: var(--mono); font-size: 0.7rem;
+      z-index: 300;
+      white-space: nowrap;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Marker styles */
+    .user-marker {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.8rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      cursor: pointer;
+    }
+    .my-marker {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid #fff;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .pulse-ring {
+      position: absolute;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      animation: expand 2s ease-out infinite;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    @keyframes expand {
+      0% { width: 16px; height: 16px; opacity: 0.8; }
+      100% { width: 60px; height: 60px; opacity: 0; }
+    }
+
+    /* Loading */
+    .loader {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* Profile chip */
+    .profile-chip {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 12px 6px 6px;
+      cursor: pointer;
+    }
+    .profile-chip-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+    }
+    .profile-chip-name { font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div class="screen" id="auth-screen">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    </div>
+    <h1>Orizon</h1>
+    <p>Real-time location sharing</p>
+  </div>
+
+  <div class="auth-form" id="auth-form">
+    <div id="auth-login">
+      <div class="input-group" style="margin-bottom:12px">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="tu@email.com" autocomplete="email" />
+      </div>
+      <div class="input-group" style="margin-bottom:16px">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button class="btn btn-primary" onclick="handleLogin()" style="width:100%;margin-bottom:10px">Accedi</button>
+      <div class="divider">— oppure —</div>
+      <button class="btn btn-ghost" onclick="showRegister()" style="width:100%;margin-top:10px">Crea account</button>
+    </div>
+
+    <div id="auth-register" style="display:none">
+      <div class="input-group" style="margin-bottom:12px">
+        <label>Nome visualizzato</label>
+        <input type="text" id="reg-name" placeholder="Il tuo nome" autocomplete="name" />
+      </div>
+      <div class="input-group" style="margin-bottom:12px">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="tu@email.com" autocomplete="email" />
+      </div>
+      <div class="input-group" style="margin-bottom:16px">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="min. 8 caratteri" autocomplete="new-password" />
+      </div>
+      <button class="btn btn-primary" onclick="handleRegister()" style="width:100%;margin-bottom:10px">Registrati</button>
+      <button class="btn btn-ghost" onclick="showLogin()" style="width:100%;margin-top:4px">Ho già un account</button>
+    </div>
+
+    <p class="error-msg" id="auth-error"></p>
+  </div>
+</div>
+
+<!-- MAP SCREEN -->
+<div class="screen hidden" id="map-screen">
+  <div id="map"></div>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="app-name">
+      <div class="dot" id="tracking-dot"></div>
+      Orizon
+    </div>
+    <div class="top-actions">
+      <div class="profile-chip" onclick="handleLogout()">
+        <div class="profile-chip-avatar" id="profile-avatar">?</div>
+        <span class="profile-chip-name" id="profile-name">...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Locate Me -->
+  <div class="locate-me-btn" onclick="centerOnMe()">
+    <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+  </div>
+
+  <!-- FABs -->
+  <div class="fab-container">
+    <div class="fab fab-add" onclick="openQRModal()" title="Aggiungi contatto">
+      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+    </div>
+    <div class="fab fab-visibility" id="visibility-fab" onclick="toggleVisibility()">
+      <svg viewBox="0 0 24 24" id="vis-icon"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+    </div>
+  </div>
+
+  <!-- Contacts Panel -->
+  <div class="contacts-panel" id="contacts-panel">
+    <div class="panel-handle" onclick="togglePanel()"></div>
+    <div class="panel-header" onclick="togglePanel()">
+      <div class="panel-title">
+        Cerchia
+        <span class="contact-count" id="contact-count">0</span>
+      </div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--text-muted)" id="panel-arrow">
+        <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+      </svg>
+    </div>
+    <div class="contacts-list" id="contacts-list">
+      <div class="empty-contacts">
+        Nessun contatto ancora.<br/>
+        Premi + per aggiungere qualcuno<br/>
+        alla tua cerchia.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div class="modal-overlay" id="qr-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Aggiungi contatto</div>
+      <div class="close-btn" onclick="closeQRModal()">✕</div>
+    </div>
+
+    <div class="qr-tabs">
+      <div class="qr-tab active" id="tab-show" onclick="switchTab('show')">Il mio QR</div>
+      <div class="qr-tab" id="tab-scan" onclick="switchTab('scan')">Scansiona</div>
+    </div>
+
+    <div id="qr-display">
+      <div id="qrcode-container"></div>
+      <p class="qr-hint">Fai scansionare questo codice<br/>da un amico per connettervi</p>
+    </div>
+
+    <div id="qr-scan">
+      <div id="scan-video-container">
+        <video id="scan-video" playsinline autoplay muted></video>
+        <div class="scan-overlay">
+          <div class="scan-frame"></div>
+          <div class="scan-line"></div>
+        </div>
+      </div>
+      <p id="scan-status">Punta la fotocamera sul QR code dell'amico</p>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Nuova connessione</div>
+      <div class="close-btn" onclick="closeConfirmModal()">✕</div>
+    </div>
+    <div class="confirm-avatar" id="confirm-avatar">?</div>
+    <div class="confirm-name" id="confirm-name">—</div>
+    <div class="confirm-sub">Vuoi aggiungere questa persona alla tua cerchia?</div>
+    <div class="confirm-actions">
+      <button class="btn btn-danger" style="flex:1" onclick="closeConfirmModal()">Rifiuta</button>
+      <button class="btn btn-primary" style="flex:1" onclick="acceptConnection()">Accetta</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ─────────────────────────────────────────────
+// Replace with your Supabase project URL and anon key
+const SUPABASE_URL = window.SUPABASE_URL || 'https://slqgdewtdbugoofthcao.supabase.co';
+const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNscWdkZXd0ZGJ1Z29vZnRoY2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyODMzOTYsImV4cCI6MjA4Nzg1OTM5Nn0.Gj9FKhlHdTBLOAvhwWV07RFz22A-BQJh6RwzufI0ehw';
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ─── STATE ───────────────────────────────────────────────
+let currentUser = null;
+let userProfile = null;
+let map = null;
+let myMarker = null;
+let myPulse = null;
+let contactMarkers = {};
+let isVisible = true;
+let panelOpen = false;
+let geoWatcher = null;
+let realtimeChannel = null;
+let pendingConnection = null;
+let scanAnimFrame = null;
+let videoStream = null;
+let contacts = [];
+
+// ─── INIT ────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    await loadUserProfile();
+    showMapScreen();
+  }
+
+  db.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user;
+    }
+  });
+
+  // Check for QR token in URL
+  const params = new URLSearchParams(window.location.search);
+  const qrToken = params.get('connect');
+  if (qrToken) {
+    window.pendingQRToken = qrToken;
+    history.replaceState({}, '', '/');
+  }
+});
+
+// ─── AUTH ────────────────────────────────────────────────
+function showRegister() {
+  document.getElementById('auth-login').style.display = 'none';
+  document.getElementById('auth-register').style.display = 'block';
+}
+function showLogin() {
+  document.getElementById('auth-login').style.display = 'block';
+  document.getElementById('auth-register').style.display = 'none';
+}
+
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  setAuthError('');
+
+  const { data, error } = await db.auth.signInWithPassword({ email, password });
+  if (error) return setAuthError(error.message);
+
+  currentUser = data.user;
+  await loadUserProfile();
+  showMapScreen();
+}
+
+async function handleRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  setAuthError('');
+
+  if (!name) return setAuthError('Inserisci il tuo nome.');
+  if (password.length < 8) return setAuthError('Password minimo 8 caratteri.');
+
+  const { data, error } = await db.auth.signUp({
+    email, password,
+    options: { data: { display_name: name } }
+  });
+  if (error) return setAuthError(error.message);
+
+  currentUser = data.user;
+  // Create profile
+  await db.from('profiles').upsert({
+    id: currentUser.id,
+    display_name: name,
+    email: email
+  });
+
+  await loadUserProfile();
+  showMapScreen();
+}
+
+async function handleLogout() {
+  if (!confirm('Vuoi uscire da Orizon?')) return;
+  stopGeolocation();
+  if (realtimeChannel) db.removeChannel(realtimeChannel);
+  await db.auth.signOut();
+  currentUser = null; userProfile = null;
+  document.getElementById('map-screen').classList.add('hidden');
+  document.getElementById('auth-screen').classList.remove('hidden');
+}
+
+function setAuthError(msg) {
+  document.getElementById('auth-error').textContent = msg;
+}
+
+async function loadUserProfile() {
+  let { data } = await db.from('profiles').select('*').eq('id', currentUser.id).single();
+  if (!data) {
+    // Create from auth metadata
+    const name = currentUser.user_metadata?.display_name || currentUser.email.split('@')[0];
+    await db.from('profiles').upsert({ id: currentUser.id, display_name: name, email: currentUser.email });
+    data = { id: currentUser.id, display_name: name, email: currentUser.email };
+  }
+  userProfile = data;
+}
+
+// ─── MAP SCREEN ──────────────────────────────────────────
+function showMapScreen() {
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('map-screen').classList.remove('hidden');
+
+  // Update profile UI
+  const name = userProfile?.display_name || currentUser.email.split('@')[0];
+  document.getElementById('profile-name').textContent = name.split(' ')[0];
+  document.getElementById('profile-avatar').textContent = name[0].toUpperCase();
+
+  setTimeout(() => {
+    initMap();
+    startGeolocation();
+    loadContacts();
+    subscribeRealtime();
+
+    if (window.pendingQRToken) {
+      handleIncomingQR(window.pendingQRToken);
+      window.pendingQRToken = null;
+    }
+  }, 300);
+}
+
+// ─── MAP ─────────────────────────────────────────────────
+function initMap() {
+  if (map) return;
+  map = L.map('map', {
+    center: [41.9, 12.5],
+    zoom: 13,
+    zoomControl: false,
+    attributionControl: false
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(map);
+}
+
+function createMyMarker(lat, lng) {
+  if (myMarker) { myMarker.setLatLng([lat, lng]); return; }
+
+  const el = document.createElement('div');
+  el.style.cssText = 'position:relative;width:16px;height:16px;';
+  el.innerHTML = `<div class="my-marker"></div><div class="pulse-ring"></div>`;
+
+  myMarker = L.marker([lat, lng], {
+    icon: L.divIcon({ html: el, className: '', iconSize: [16, 16], iconAnchor: [8, 8] })
+  }).addTo(map);
+}
+
+function updateContactMarker(contact, lat, lng) {
+  const name = contact.display_name || '?';
+  const initial = name[0].toUpperCase();
+  const colors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981'];
+  const color = colors[name.charCodeAt(0) % colors.length];
+
+  if (contactMarkers[contact.id]) {
+    contactMarkers[contact.id].setLatLng([lat, lng]);
+    return;
+  }
+
+  const el = document.createElement('div');
+  el.className = 'user-marker';
+  el.style.background = color;
+  el.style.color = '#fff';
+  el.textContent = initial;
+  el.title = name;
+  el.onclick = () => map.flyTo([lat, lng], 16, { duration: 1 });
+
+  contactMarkers[contact.id] = L.marker([lat, lng], {
+    icon: L.divIcon({ html: el, className: '', iconSize: [36, 36], iconAnchor: [18, 18] })
+  }).addTo(map);
+}
+
+function removeContactMarker(userId) {
+  if (contactMarkers[userId]) {
+    map.removeLayer(contactMarkers[userId]);
+    delete contactMarkers[userId];
+  }
+}
+
+function centerOnMe() {
+  if (myMarker) {
+    map.flyTo(myMarker.getLatLng(), 16, { duration: 1 });
+  }
+}
+
+// ─── GEOLOCATION ─────────────────────────────────────────
+function startGeolocation() {
+  if (!navigator.geolocation) return showToast('GPS non supportato');
+
+  geoWatcher = navigator.geolocation.watchPosition(
+    async (pos) => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+      createMyMarker(lat, lng);
+
+      if (!myMarker._hasCentered) {
+        map.setView([lat, lng], 15);
+        myMarker._hasCentered = true;
+      }
+
+      // Update DB
+      await db.from('locations').upsert({
+        user_id: currentUser.id,
+        lat, lng,
+        is_visible: isVisible,
+        last_seen: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+    },
+    (err) => showToast('Errore GPS: ' + err.message),
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
+  );
+}
+
+function stopGeolocation() {
+  if (geoWatcher !== null) {
+    navigator.geolocation.clearWatch(geoWatcher);
+    geoWatcher = null;
+  }
+}
+
+// ─── VISIBILITY ───────────────────────────────────────────
+async function toggleVisibility() {
+  isVisible = !isVisible;
+  const fab = document.getElementById('visibility-fab');
+  const icon = document.getElementById('vis-icon');
+
+  if (isVisible) {
+    fab.classList.remove('off');
+    fab.style.background = 'var(--green)';
+    fab.style.boxShadow = '0 0 30px rgba(34,197,94,0.5)';
+    icon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+    showToast('Posizione visibile ✓');
+  } else {
+    fab.classList.add('off');
+    fab.style.background = 'var(--surface2)';
+    fab.style.boxShadow = 'none';
+    icon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+    showToast('Posizione nascosta');
+  }
+
+  await db.from('locations').update({ is_visible: isVisible })
+    .eq('user_id', currentUser.id);
+}
+
+// ─── CONTACTS ────────────────────────────────────────────
+async function loadContacts() {
+  // Get accepted connections
+  const { data: conns } = await db.from('connections')
+    .select('user_a, user_b, status')
+    .or(`user_a.eq.${currentUser.id},user_b.eq.${currentUser.id}`)
+    .eq('status', 'accepted');
+
+  if (!conns || conns.length === 0) return;
+
+  const contactIds = conns.map(c =>
+    c.user_a === currentUser.id ? c.user_b : c.user_a
+  );
+
+  const { data: profiles } = await db.from('profiles')
+    .select('*').in('id', contactIds);
+
+  contacts = profiles || [];
+  document.getElementById('contact-count').textContent = contacts.length;
+
+  // Load their locations
+  const { data: locs } = await db.from('locations')
+    .select('*').in('user_id', contactIds).eq('is_visible', true);
+
+  renderContactsList(locs || []);
+  (locs || []).forEach(loc => {
+    const contact = contacts.find(c => c.id === loc.user_id);
+    if (contact) updateContactMarker(contact, loc.lat, loc.lng);
+  });
+}
+
+function renderContactsList(locations) {
+  const list = document.getElementById('contacts-list');
+  if (contacts.length === 0) {
+    list.innerHTML = `<div class="empty-contacts">Nessun contatto ancora.<br/>Premi + per aggiungere qualcuno<br/>alla tua cerchia.</div>`;
+    return;
+  }
+
+  list.innerHTML = contacts.map(c => {
+    const loc = locations.find(l => l.user_id === c.id);
+    const isOnline = loc && loc.is_visible;
+    const lastSeen = loc ? timeSince(new Date(loc.last_seen)) : 'Mai';
+    const dist = loc && myMarker ? calcDist(myMarker.getLatLng(), { lat: loc.lat, lng: loc.lng }) : null;
+    const initial = (c.display_name || '?')[0].toUpperCase();
+    const colors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981'];
+    const color = colors[(c.display_name || '').charCodeAt(0) % colors.length];
+
+    return `
+      <div class="contact-card" onclick="flyToContact('${c.id}', ${loc?.lat || 0}, ${loc?.lng || 0}, ${!!isOnline})">
+        <div class="contact-avatar" style="background:${color}">
+          ${initial}
+          <div class="status-dot ${isOnline ? 'online' : 'offline'}"></div>
+        </div>
+        <div class="contact-info">
+          <div class="contact-name">${c.display_name || c.email}</div>
+          <div class="contact-dist">${isOnline ? (dist ? dist + ' km' : 'Visibile') : 'Nascosto · ' + lastSeen}</div>
+        </div>
+        ${isOnline ? `<div class="locate-btn" onclick="event.stopPropagation();flyToContact('${c.id}',${loc.lat},${loc.lng},true)"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function flyToContact(userId, lat, lng, isOnline) {
+  if (!isOnline || !lat) { showToast('Posizione non disponibile'); return; }
+  map.flyTo([lat, lng], 16, { duration: 1.2 });
+  if (panelOpen) togglePanel();
+}
+
+function calcDist(a, b) {
+  const R = 6371;
+  const dLat = (b.lat - a.lat) * Math.PI / 180;
+  const dLng = (b.lng - a.lng) * Math.PI / 180;
+  const x = Math.sin(dLat/2)**2 + Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+  return (R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x))).toFixed(1);
+}
+
+function timeSince(date) {
+  const s = (Date.now() - date) / 1000;
+  if (s < 60) return 'ora';
+  if (s < 3600) return Math.floor(s/60) + 'm fa';
+  if (s < 86400) return Math.floor(s/3600) + 'h fa';
+  return Math.floor(s/86400) + 'g fa';
+}
+
+// ─── REALTIME ────────────────────────────────────────────
+function subscribeRealtime() {
+  realtimeChannel = db.channel('locations-channel')
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'locations'
+    }, (payload) => {
+      const loc = payload.new;
+      if (!loc || loc.user_id === currentUser.id) return;
+      const contact = contacts.find(c => c.id === loc.user_id);
+      if (!contact) return;
+
+      if (loc.is_visible) {
+        updateContactMarker(contact, loc.lat, loc.lng);
+      } else {
+        removeContactMarker(loc.user_id);
+      }
+
+      // Refresh list
+      loadContactsLocations();
+    })
+    .on('postgres_changes', {
+      event: 'INSERT', schema: 'public', table: 'connections'
+    }, (payload) => {
+      const conn = payload.new;
+      if (conn.user_b === currentUser.id && conn.status === 'pending') {
+        handleIncomingConnectionRequest(conn);
+      }
+    })
+    .subscribe();
+}
+
+async function loadContactsLocations() {
+  const contactIds = contacts.map(c => c.id);
+  if (!contactIds.length) return;
+  const { data: locs } = await db.from('locations')
+    .select('*').in('user_id', contactIds);
+  renderContactsList(locs || []);
+}
+
+// ─── PANEL ───────────────────────────────────────────────
+function togglePanel() {
+  panelOpen = !panelOpen;
+  document.getElementById('contacts-panel').classList.toggle('open', panelOpen);
+  const arrow = document.getElementById('panel-arrow');
+  arrow.style.transform = panelOpen ? 'rotate(180deg)' : '';
+}
+
+// ─── QR MODAL ────────────────────────────────────────────
+function openQRModal() {
+  generateQR();
+  document.getElementById('qr-modal').classList.add('open');
+}
+
+function closeQRModal() {
+  document.getElementById('qr-modal').classList.remove('open');
+  stopScan();
+  switchTab('show');
+}
+
+function generateQR() {
+  const container = document.getElementById('qrcode-container');
+  container.innerHTML = '';
+  const token = btoa(JSON.stringify({
+    uid: currentUser.id,
+    name: userProfile?.display_name || currentUser.email,
+    ts: Date.now()
+  }));
+  const url = `${window.location.origin}?connect=${token}`;
+  new QRCode(container, {
+    text: url, width: 200, height: 200,
+    colorDark: '#040812', colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-show').classList.toggle('active', tab === 'show');
+  document.getElementById('tab-scan').classList.toggle('active', tab === 'scan');
+  document.getElementById('qr-display').style.display = tab === 'show' ? 'flex' : 'none';
+  document.getElementById('qr-scan').style.display = tab === 'scan' ? 'flex' : 'none';
+  if (tab === 'scan') startScan();
+  else stopScan();
+}
+
+async function startScan() {
+  try {
+    videoStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' }
+    });
+    const video = document.getElementById('scan-video');
+    video.srcObject = videoStream;
+    await video.play();
+    scanFrame();
+  } catch (e) {
+    document.getElementById('scan-status').textContent = 'Fotocamera non disponibile';
+  }
+}
+
+function stopScan() {
+  if (scanAnimFrame) { cancelAnimationFrame(scanAnimFrame); scanAnimFrame = null; }
+  if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
+}
+
+function scanFrame() {
+  const video = document.getElementById('scan-video');
+  if (!video.videoWidth) { scanAnimFrame = requestAnimationFrame(scanFrame); return; }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+  if (code && code.data.includes('connect=')) {
+    const token = new URL(code.data).searchParams.get('connect');
+    closeQRModal();
+    handleIncomingQR(token);
+    return;
+  }
+
+  scanAnimFrame = requestAnimationFrame(scanFrame);
+}
+
+// ─── QR CONNECT ──────────────────────────────────────────
+async function handleIncomingQR(token) {
+  try {
+    const decoded = JSON.parse(atob(token));
+    if (!decoded.uid || decoded.uid === currentUser.id) return;
+
+    // Check if already connected
+    const { data: existing } = await db.from('connections')
+      .select('*')
+      .or(`and(user_a.eq.${currentUser.id},user_b.eq.${decoded.uid}),and(user_a.eq.${decoded.uid},user_b.eq.${currentUser.id})`)
+      .single();
+
+    if (existing) { showToast('Già nella tua cerchia!'); return; }
+
+    // Show confirm modal
+    pendingConnection = decoded;
+    document.getElementById('confirm-avatar').textContent = (decoded.name || '?')[0].toUpperCase();
+    document.getElementById('confirm-name').textContent = decoded.name || 'Utente sconosciuto';
+    document.getElementById('confirm-modal').classList.add('open');
+  } catch (e) {
+    showToast('QR non valido');
+  }
+}
+
+async function acceptConnection() {
+  if (!pendingConnection) return;
+  document.getElementById('confirm-modal').classList.remove('open');
+
+  await db.from('connections').insert({
+    user_a: currentUser.id,
+    user_b: pendingConnection.uid,
+    status: 'accepted',
+    created_at: new Date().toISOString()
+  });
+
+  showToast('✓ ' + pendingConnection.name + ' aggiunto!');
+  pendingConnection = null;
+  await loadContacts();
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirm-modal').classList.remove('open');
+  pendingConnection = null;
+}
+
+async function handleIncomingConnectionRequest(conn) {
+  const { data: profile } = await db.from('profiles').select('*').eq('id', conn.user_a).single();
+  pendingConnection = { uid: conn.user_a, name: profile?.display_name || 'Utente', connId: conn.id };
+  document.getElementById('confirm-avatar').textContent = (pendingConnection.name || '?')[0].toUpperCase();
+  document.getElementById('confirm-name').textContent = pendingConnection.name;
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+// ─── TOAST ───────────────────────────────────────────────
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── SERVICE WORKER ──────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
