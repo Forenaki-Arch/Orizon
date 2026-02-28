@@ -1479,34 +1479,7 @@
     .battery-info.low { color: var(--orange); }
     .battery-info.critical { color: var(--red); }
 
-    /* ── DARK/LIGHT TOGGLE ───────────────────────────────── */
-    .theme-toggle {
-      position: relative; width: 44px; height: 24px;
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 12px; cursor: pointer; transition: background 0.3s, border-color 0.3s;
-      flex-shrink: 0;
-    }
-    .theme-toggle.light { background: #c7d8ff; border-color: #93c5fd; }
-    .theme-toggle::after {
-      content: ''; position: absolute; top: 2px; left: 2px;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: var(--text-muted); transition: transform 0.3s, background 0.3s;
-    }
-    .theme-toggle.light::after { transform: translateX(20px); background: var(--accent); }
 
-    /* ── LIGHT MODE ──────────────────────────────────────── */
-    body.light-mode {
-      --bg: #f0f4ff;
-      --surface: rgba(255,255,255,0.97);
-      --surface2: rgba(235,242,255,0.95);
-      --border: rgba(59,130,246,0.2);
-      --text: #1a2340;
-      --text-muted: #5a7aaa;
-      --accent-glow: rgba(59,130,246,0.25);
-    }
-    body.light-mode .top-bar { background: linear-gradient(180deg, rgba(240,244,255,0.97) 0%, rgba(240,244,255,0.7) 80%, transparent 100%); }
-    body.light-mode .leaflet-tile { filter: none; }
-    body.light-mode #loading-screen { background: var(--bg); }
 
     /* ── "IL MONDO ORIZON" ───────────────────────────────── */
     .orizon-world-card {
@@ -1696,6 +1669,23 @@
       background: var(--green) !important;
       box-shadow: 0 0 10px var(--green) !important;
     }
+
+    /* ══ DRAGGABLE BOTTOM SHEET ══════════════════════════ */
+    .contacts-panel { touch-action: pan-x; transform: translateY(calc(100% - 72px)); }
+    .contacts-panel.open { transform: translateY(0); }
+    .contacts-panel.dragging { transition: none !important; }
+    .panel-drag { padding: 10px 20px 6px; cursor: grab; display: flex; flex-direction: column; gap: 8px; touch-action: none; }
+    .panel-drag:active { cursor: grabbing; }
+
+    /* Dynamic floating icon anchoring */
+    .side-btns { bottom: calc(var(--safe-bottom) + var(--panel-h, 72px) + 20px) !important; transition: bottom 0.4s cubic-bezier(0.32,0.72,0,1) !important; }
+    .locate-me-btn { bottom: calc(var(--safe-bottom) + var(--panel-h, 72px) + 20px) !important; transition: bottom 0.4s cubic-bezier(0.32,0.72,0,1) !important; }
+    body.panel-dragging .side-btns,
+    body.panel-dragging .locate-me-btn { transition: none !important; }
+
+    /* Remove user button */
+    .mini-btn.remove-btn:hover { background: rgba(239,68,68,0.15); border-color: var(--red); }
+    .mini-btn.remove-btn:hover svg { fill: var(--red); }
   </style>
 </head>
 <body>
@@ -1798,15 +1788,17 @@
 
   <!-- Contacts Panel -->
   <div class="contacts-panel" id="contacts-panel">
-    <div class="panel-handle" onclick="togglePanel()"></div>
-    <div class="panel-header" onclick="togglePanel()">
-      <div class="panel-title">
-        Cerchia
-        <span class="contact-count" id="contact-count">0</span>
+    <div class="panel-drag" id="panel-drag-area">
+      <div class="panel-handle"></div>
+      <div class="panel-header" onclick="togglePanel()">
+        <div class="panel-title">
+          Cerchia
+          <span class="contact-count" id="contact-count">0</span>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--text-muted)" id="panel-arrow">
+          <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+        </svg>
       </div>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--text-muted)" id="panel-arrow">
-        <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
-      </svg>
     </div>
     <div class="contacts-list" id="contacts-list">
       <div class="empty-contacts">
@@ -1993,17 +1985,7 @@
         </div>
       </div>
     </div>
-    <div class="settings-group">
-      <div class="settings-group-label">Aspetto</div>
-      <div class="settings-item" onclick="toggleTheme()">
-        <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
-        <div class="settings-item-text">
-          <div class="settings-item-title">Tema</div>
-          <div class="settings-item-value" id="theme-label">Scuro</div>
-        </div>
-        <div class="theme-toggle" id="theme-toggle"></div>
-      </div>
-    </div>
+
     <div class="settings-group">
       <div class="settings-group-label">Info</div>
       <div class="settings-item" onclick="openOrizonWorld();closeSettings()">
@@ -2022,6 +2004,13 @@
       </div>
     </div>
     <div class="settings-group">
+      <div class="settings-item danger" onclick="deleteAccount()">
+        <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        <div class="settings-item-text">
+          <div class="settings-item-title">Elimina account</div>
+          <div class="settings-item-value">Cancella tutti i dati permanentemente</div>
+        </div>
+      </div>
       <div class="settings-item danger" onclick="handleLogout()">
         <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
         <div class="settings-item-text">
@@ -2151,24 +2140,16 @@ let videoStream = null;
 let contacts = [];
 let compassMode = false;
 let compassHeading = 0;
-let lightMode = (() => { try { return localStorage.getItem('orizon_light_mode') === '1'; } catch { return false; } })();
+
 let hiddenUsers = (() => { try { return JSON.parse(localStorage.getItem('orizon_hidden_users') || '[]'); } catch { return []; } })();
 let navTargetLat = null;
 let navTargetLng = null;
-let ghostTileLayer = null;
-let darkTileLayer = null;
+
 let visibleToUsers = []; // user IDs for custom visibility
 let profilePicUrl = null; // cached avatar URL
 
 // ─── INIT ────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
-  // Apply saved theme
-  if (lightMode) {
-    document.body.classList.add('light-mode');
-    document.getElementById('theme-toggle').classList.add('light');
-    document.getElementById('theme-label').textContent = 'Chiaro';
-  }
-
   // Check for email verification redirect (Supabase v2 uses hash fragment)
   const hash = new URLSearchParams(window.location.hash.slice(1));
   const hashType = hash.get('type');
@@ -2367,6 +2348,7 @@ function showMapScreen() {
     startGeolocationWithBattery();
     loadContacts();
     subscribeRealtime();
+    initPanelDrag();
 
     if (window.pendingQRToken) {
       handleIncomingQR(window.pendingQRToken);
@@ -2385,14 +2367,7 @@ function initMap() {
     attributionControl: false
   });
 
-  darkTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
-  ghostTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 });
-
-  if (lightMode) {
-    ghostTileLayer.addTo(map);
-  } else {
-    darkTileLayer.addTo(map);
-  }
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 }
 
 function createMyMarker(lat, lng) {
@@ -2722,6 +2697,9 @@ function renderContactsList(locations) {
           <div class="contact-dist">${statusText}</div>
         </div>
         <div class="contact-actions">
+          <div class="mini-btn remove-btn" onclick="event.stopPropagation();removeUserFromCircle('${c.id}')" title="Rimuovi dalla cerchia">
+            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </div>
           <div class="mini-btn hide-user-btn ${isHidden ? 'active' : ''}" onclick="event.stopPropagation();toggleHideUser('${c.id}')" title="${eyeTitle}">
             <svg viewBox="0 0 24 24">${eyeSvg}</svg>
           </div>
@@ -2834,9 +2812,17 @@ async function loadContactsLocations() {
 // ─── PANEL ───────────────────────────────────────────────
 function togglePanel() {
   panelOpen = !panelOpen;
-  document.getElementById('contacts-panel').classList.toggle('open', panelOpen);
+  const panel = document.getElementById('contacts-panel');
+  panel.classList.toggle('open', panelOpen);
+  panel.style.transform = '';
   const arrow = document.getElementById('panel-arrow');
   arrow.style.transform = panelOpen ? 'rotate(180deg)' : '';
+  if (panelOpen) {
+    const h = Math.min(panel.offsetHeight, window.innerHeight * 0.72);
+    updateFloatingPositions(h);
+  } else {
+    updateFloatingPositions(72);
+  }
 }
 
 // ─── QR MODAL ────────────────────────────────────────────
@@ -3109,25 +3095,7 @@ function closeSidebar() {
   document.getElementById('fab-container').classList.remove('sidebar-open');
 }
 
-// ─── DARK/LIGHT MODE ─────────────────────────────────────
-function toggleTheme() {
-  lightMode = !lightMode;
-  document.body.classList.toggle('light-mode', lightMode);
-  document.getElementById('theme-toggle').classList.toggle('light', lightMode);
-  document.getElementById('theme-label').textContent = lightMode ? 'Chiaro' : 'Scuro';
-  localStorage.setItem('orizon_light_mode', lightMode ? '1' : '0');
 
-  // Swap map tile layers
-  if (map) {
-    if (lightMode) {
-      if (darkTileLayer) map.removeLayer(darkTileLayer);
-      if (ghostTileLayer) ghostTileLayer.addTo(map);
-    } else {
-      if (ghostTileLayer) map.removeLayer(ghostTileLayer);
-      if (darkTileLayer) darkTileLayer.addTo(map);
-    }
-  }
-}
 
 // ─── IL MONDO ORIZON ─────────────────────────────────────
 function openOrizonWorld() {
@@ -3252,6 +3220,143 @@ function updateAllAvatars(url) {
   if (sidebarAvatarEl) {
     sidebarAvatarEl.innerHTML = `<img src="${url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" />`;
   }
+}
+
+// ─── REMOVE USER FROM CIRCLE ─────────────────────────────
+async function removeUserFromCircle(userId) {
+  const contact = contacts.find(c => c.id === userId);
+  const name = contact?.display_name || 'utente';
+  if (!confirm(`Rimuovere ${name} dalla tua cerchia?`)) return;
+
+  await db.from('connections')
+    .delete()
+    .or(`and(user_a.eq.${currentUser.id},user_b.eq.${userId}),and(user_a.eq.${userId},user_b.eq.${currentUser.id})`);
+
+  removeContactMarker(userId);
+  contacts = contacts.filter(c => c.id !== userId);
+  visibleToUsers = visibleToUsers.filter(id => id !== userId);
+  hiddenUsers = hiddenUsers.filter(id => id !== userId);
+  localStorage.setItem('orizon_hidden_users', JSON.stringify(hiddenUsers));
+
+  document.getElementById('contact-count').textContent = contacts.length;
+  await loadContactsLocations();
+  showToast(`${name} rimosso dalla cerchia`);
+}
+
+// ─── DELETE ACCOUNT ──────────────────────────────────────
+async function deleteAccount() {
+  if (!confirm('Sei sicuro di voler eliminare il tuo account?\nTutti i tuoi dati verranno cancellati permanentemente.')) return;
+  if (!confirm('Ultima conferma: eliminare definitivamente il tuo account Orizon?')) return;
+
+  closeSettings();
+  showToast('Eliminazione account in corso...');
+
+  try {
+    await db.from('connections').delete()
+      .or(`user_a.eq.${currentUser.id},user_b.eq.${currentUser.id}`);
+    await db.from('locations').delete().eq('user_id', currentUser.id);
+    await db.from('profiles').delete().eq('id', currentUser.id);
+
+    try {
+      await db.storage.from('avatars').remove([
+        `avatars/${currentUser.id}.jpg`,
+        `avatars/${currentUser.id}.png`,
+        `avatars/${currentUser.id}.webp`
+      ]);
+    } catch(e) {}
+
+    stopGeolocation();
+    stopCompass();
+    if (realtimeChannel) db.removeChannel(realtimeChannel);
+    await db.auth.signOut();
+
+    currentUser = null;
+    userProfile = null;
+    contacts = [];
+
+    document.getElementById('map-screen').classList.add('hidden');
+    document.getElementById('auth-screen').classList.remove('hidden');
+    showToast('Account eliminato con successo');
+  } catch (err) {
+    showToast('Errore: ' + (err.message || 'riprova'));
+  }
+}
+
+// ─── DRAGGABLE BOTTOM SHEET ──────────────────────────────
+let panelDragStartY = 0;
+let panelDragStartTranslate = 0;
+let panelIsDragging = false;
+const PANEL_COLLAPSED_OFFSET = 72;
+
+function initPanelDrag() {
+  const dragArea = document.getElementById('panel-drag-area');
+  if (!dragArea) return;
+  dragArea.addEventListener('touchstart', onPanelTouchStart, { passive: true });
+  dragArea.addEventListener('touchmove', onPanelTouchMove, { passive: false });
+  dragArea.addEventListener('touchend', onPanelTouchEnd, { passive: true });
+}
+
+function getPanelTranslateY() {
+  const panel = document.getElementById('contacts-panel');
+  const st = getComputedStyle(panel).transform;
+  if (!st || st === 'none') return 0;
+  const m = new DOMMatrix(st);
+  return m.m42;
+}
+
+function onPanelTouchStart(e) {
+  const panel = document.getElementById('contacts-panel');
+  panelDragStartY = e.touches[0].clientY;
+  panelDragStartTranslate = getPanelTranslateY();
+  panelIsDragging = true;
+  panel.classList.add('dragging');
+  document.body.classList.add('panel-dragging');
+}
+
+function onPanelTouchMove(e) {
+  if (!panelIsDragging) return;
+  e.preventDefault();
+  const panel = document.getElementById('contacts-panel');
+  const dy = e.touches[0].clientY - panelDragStartY;
+  let newY = panelDragStartTranslate + dy;
+  const panelHeight = panel.offsetHeight;
+  const maxTranslate = panelHeight - PANEL_COLLAPSED_OFFSET;
+  newY = Math.max(0, Math.min(newY, maxTranslate));
+  panel.style.transform = `translateY(${newY}px)`;
+  const visibleH = panelHeight - newY;
+  updateFloatingPositions(visibleH);
+}
+
+function onPanelTouchEnd() {
+  if (!panelIsDragging) return;
+  panelIsDragging = false;
+  const panel = document.getElementById('contacts-panel');
+  panel.classList.remove('dragging');
+  document.body.classList.remove('panel-dragging');
+
+  const currentY = getPanelTranslateY();
+  const panelHeight = panel.offsetHeight;
+  const maxTranslate = panelHeight - PANEL_COLLAPSED_OFFSET;
+  const threshold = maxTranslate * 0.4;
+
+  if (currentY < threshold) {
+    panelOpen = true;
+    panel.classList.add('open');
+    panel.style.transform = '';
+    updateFloatingPositions(Math.min(panelHeight, window.innerHeight * 0.72));
+  } else {
+    panelOpen = false;
+    panel.classList.remove('open');
+    panel.style.transform = '';
+    updateFloatingPositions(PANEL_COLLAPSED_OFFSET);
+  }
+
+  const arrow = document.getElementById('panel-arrow');
+  arrow.style.transform = panelOpen ? 'rotate(180deg)' : '';
+}
+
+function updateFloatingPositions(visibleH) {
+  document.documentElement.style.setProperty('--panel-h', visibleH + 'px');
 }
 
 // ─── SERVICE WORKER ──────────────────────────────────────
