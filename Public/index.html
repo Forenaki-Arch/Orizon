@@ -3359,9 +3359,26 @@ function updateFloatingPositions(visibleH) {
   document.documentElement.style.setProperty('--panel-h', visibleH + 'px');
 }
 
-// ─── SERVICE WORKER ──────────────────────────────────────
+// ─── SERVICE WORKER (auto-update on deploy) ─────────────
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    // Check for updates every 60s while the page is open
+    setInterval(() => reg.update(), 60000);
+    reg.addEventListener('updatefound', () => {
+      const newSW = reg.installing;
+      if (!newSW) return;
+      newSW.addEventListener('statechange', () => {
+        // New SW activated → reload to get the latest code
+        if (newSW.state === 'activated' && navigator.serviceWorker.controller) {
+          window.location.reload();
+        }
+      });
+    });
+  }).catch(() => {});
+  // Also reload when a new SW takes control while this page is open
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
 }
 </script>
 </body>
