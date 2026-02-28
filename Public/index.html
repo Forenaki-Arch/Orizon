@@ -1734,7 +1734,7 @@
 
     <p class="error-msg" id="auth-error"></p>
   </div>
-  <div class="auth-footer">v1.0.0 · Build 202405</div>
+  <div class="auth-footer">v2.0.0 · Build 202602</div>
 </div>
 
 <!-- VERIFIED SCREEN -->
@@ -1995,11 +1995,11 @@
           <div class="settings-item-value">Mission, guida e privacy</div>
         </div>
       </div>
-      <div class="settings-item" style="cursor:default">
+      <div class="settings-item" onclick="openChangelog();closeSettings()">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
         <div class="settings-item-text">
           <div class="settings-item-title">Orizon</div>
-          <div class="settings-item-value">Versione 1.0.0 · Build 202405</div>
+          <div class="settings-item-value">Versione 2.0.0 · Build 202602</div>
         </div>
       </div>
     </div>
@@ -2103,6 +2103,56 @@
     <div id="custom-users-list" style="display:none">
       <div class="settings-group-label" style="margin-bottom:8px">Seleziona utenti dalla tua cerchia</div>
       <div id="custom-users-container"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGELOG MODAL -->
+<div class="modal-overlay" id="changelog-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">📋 Changelog</div>
+      <div class="close-btn" onclick="closeChangelog()">✕</div>
+    </div>
+
+    <!-- v2.0.0 -->
+    <div class="settings-group">
+      <div class="settings-group-label">v2.0.0 · Febbraio 2026</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px">
+        <div class="tip-item"><span class="tip-num">★</span> Pannello Cerchia draggabile con gesture touch — trascina verso l'alto o il basso per aprire e chiudere</div>
+        <div class="tip-item"><span class="tip-num">★</span> Icone flottanti (bussola, centrami) si ancorano dinamicamente al bordo del pannello</div>
+        <div class="tip-item"><span class="tip-num">★</span> Rimuovi contatto dalla cerchia — eliminazione bidirezionale con pulsante ✕ su ogni contatto</div>
+        <div class="tip-item"><span class="tip-num">★</span> Elimina account — cancella permanentemente tutti i dati con doppia conferma</div>
+        <div class="tip-item"><span class="tip-num">★</span> Dark mode permanente — rimosso il toggle tema, l'app resta sempre scura</div>
+        <div class="tip-item"><span class="tip-num">★</span> Aggiornamento automatico — il sito si aggiorna all'ultima versione senza bisogno di svuotare la cache</div>
+        <div class="tip-item"><span class="tip-num">★</span> Fix menu laterale — i pulsanti nella sidebar ora funzionano correttamente</div>
+        <div class="tip-item"><span class="tip-num">★</span> Changelog — tocca la versione nelle impostazioni per vedere le novità</div>
+      </div>
+    </div>
+
+    <!-- v1.0.0 -->
+    <div class="settings-group">
+      <div class="settings-group-label">v1.0.0 · Maggio 2024</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px">
+        <div class="tip-item"><span class="tip-num">★</span> Prima release di Orizon — condivisione posizione in tempo reale</div>
+        <div class="tip-item"><span class="tip-num">★</span> Registrazione e login con email + verifica</div>
+        <div class="tip-item"><span class="tip-num">★</span> Aggiunta contatti tramite scansione QR code reciproca</div>
+        <div class="tip-item"><span class="tip-num">★</span> Mappa interattiva con marcatori in tempo reale (Leaflet + OpenStreetMap)</div>
+        <div class="tip-item"><span class="tip-num">★</span> Pannello Cerchia con lista contatti, distanza e stato online</div>
+        <div class="tip-item"><span class="tip-num">★</span> Modalità freccia con giroscopio — segui la direzione dello sguardo</div>
+        <div class="tip-item"><span class="tip-num">★</span> Navigazione verso contatti con Google Maps (a piedi, auto, mezzi)</div>
+        <div class="tip-item"><span class="tip-num">★</span> Visibilità a 3 stati — Tutti (verde), Nessuno (rosso), Custom (arancione)</div>
+        <div class="tip-item"><span class="tip-num">★</span> Nascondi/mostra contatti dalla mappa senza rimuoverli</div>
+        <div class="tip-item"><span class="tip-num">★</span> Foto profilo con upload e ridimensionamento automatico</div>
+        <div class="tip-item"><span class="tip-num">★</span> Indicatore GPS pulsante (verde/rosso/arancione) in base alla visibilità</div>
+        <div class="tip-item"><span class="tip-num">★</span> Barra bussola con direzione cardinale e gradi</div>
+        <div class="tip-item"><span class="tip-num">★</span> Menu laterale con accesso rapido a tutte le funzioni</div>
+        <div class="tip-item"><span class="tip-num">★</span> Il Mondo Orizon — mission, tips & tricks, privacy manifesto</div>
+        <div class="tip-item"><span class="tip-num">★</span> PWA installabile con Service Worker per uso offline</div>
+        <div class="tip-item"><span class="tip-num">★</span> Livello batteria visibile accanto ai contatti</div>
+        <div class="tip-item"><span class="tip-num">★</span> Match automatico — il QR modal si chiude e mostra toast quando la connessione è accettata</div>
+      </div>
     </div>
   </div>
 </div>
@@ -3085,14 +3135,16 @@ function openSidebar() {
   sidebarOpen = true;
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebar-overlay').classList.add('open');
-  document.getElementById('fab-container').classList.add('sidebar-open');
+  const fab = document.getElementById('fab-container');
+  if (fab) fab.classList.add('sidebar-open');
 }
 
 function closeSidebar() {
   sidebarOpen = false;
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebar-overlay').classList.remove('open');
-  document.getElementById('fab-container').classList.remove('sidebar-open');
+  const fab = document.getElementById('fab-container');
+  if (fab) fab.classList.remove('sidebar-open');
 }
 
 
@@ -3103,6 +3155,14 @@ function openOrizonWorld() {
 }
 function closeOrizonWorld() {
   document.getElementById('orizon-world-modal').classList.remove('open');
+}
+
+// ─── CHANGELOG ────────────────────────────────────────────
+function openChangelog() {
+  document.getElementById('changelog-modal').classList.add('open');
+}
+function closeChangelog() {
+  document.getElementById('changelog-modal').classList.remove('open');
 }
 
 // ─── GEOLOCATION (updated to report battery) ─────────────

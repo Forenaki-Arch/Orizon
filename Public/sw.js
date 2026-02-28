@@ -1,5 +1,5 @@
 // >>> Change this version string every deploy to bust the cache <<<
-const CACHE_VERSION = '20260228-1';
+const CACHE_VERSION = '20260228-2';
 const CACHE_NAME = 'orizon-' + CACHE_VERSION;
 
 const CDN_ASSETS = [
