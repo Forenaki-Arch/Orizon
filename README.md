@@ -43,7 +43,7 @@ Add people by scanning their QR code, see where they are on the map, and control
 
 ```
 orizon/
-├── public/
+├── Public/
 │   ├── index.html        # Full application (single file)
 │   ├── manifest.json     # PWA manifest
 │   └── sw.js             # Service Worker (offline support)
