@@ -1298,6 +1298,57 @@
       font-size: 0.75rem; font-weight: 700;
     }
     .profile-chip-name { font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted); }
+
+    /* ── AUTH FOOTER ─────────────────────────────────────── */
+    .auth-footer { font-family: var(--mono); font-size: 0.55rem; color: var(--text-muted); opacity: 0.45; text-align: center; margin-top: 4px; }
+
+    /* ── HEADER DOT HIDDEN STATE ──────────────────────────── */
+    .app-name .dot { transition: background 0.4s, box-shadow 0.4s; }
+    .app-name .dot.vis-off { background: var(--orange) !important; box-shadow: 0 0 10px var(--orange) !important; animation: none !important; }
+
+    /* ── FAB VIS STATES (override legacy) ────────────────── */
+    .fab-visibility.vis-off { background: var(--orange) !important; box-shadow: 0 4px 30px var(--orange-glow) !important; }
+
+    /* ── QR WAIT MODAL ───────────────────────────────────── */
+    .qr-wait { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 8px 0; }
+    .qr-wait-spinner { width: 60px; height: 60px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; }
+    .qr-wait-text { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); line-height: 1.8; }
+    .qr-wait-name { font-size: 1.1rem; font-weight: 800; }
+
+    /* ── NAVIGATION MODAL ────────────────────────────────── */
+    .nav-options { display: flex; flex-direction: column; gap: 8px; }
+    .nav-option { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: all var(--transition); text-decoration: none; color: var(--text); }
+    .nav-option:hover { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+    .nav-option:active { transform: scale(0.97); opacity: 0.8; }
+    .nav-option-icon { width: 40px; height: 40px; border-radius: 50%; background: rgba(59,130,246,0.12); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-option-icon svg { width: 20px; height: 20px; fill: var(--accent); }
+    .nav-option-label { font-weight: 700; font-size: 0.88rem; }
+    .nav-option-sub { font-family: var(--mono); font-size: 0.6rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── SETTINGS MODAL ──────────────────────────────────── */
+    .settings-group { display: flex; flex-direction: column; gap: 6px; }
+    .settings-group-label { font-family: var(--mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; padding-left: 4px; margin-bottom: 2px; }
+    .settings-item { display: flex; align-items: center; gap: 12px; padding: 13px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: all var(--transition); }
+    .settings-item:hover { border-color: rgba(99,179,255,0.25); }
+    .settings-item:active { transform: scale(0.97); }
+    .settings-item svg { width: 18px; height: 18px; fill: var(--text-muted); flex-shrink: 0; }
+    .settings-item-text { flex: 1; }
+    .settings-item-title { font-weight: 600; font-size: 0.88rem; }
+    .settings-item-value { font-family: var(--mono); font-size: 0.62rem; color: var(--text-muted); margin-top: 1px; }
+    .settings-item.danger svg { fill: var(--red); }
+    .settings-item.danger .settings-item-title { color: var(--red); }
+    .settings-item.danger { border-color: rgba(239,68,68,0.15); background: rgba(239,68,68,0.05); }
+
+    /* ── COMPASS BAR ─────────────────────────────────────── */
+    .compass-bar { position: fixed; top: calc(var(--safe-top) + 58px); left: 50%; transform: translateX(-50%); z-index: 100; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted); display: none; align-items: center; gap: 8px; backdrop-filter: blur(12px); white-space: nowrap; pointer-events: none; }
+    .compass-bar.visible { display: flex; }
+    .compass-needle { font-size: 1rem; display: inline-block; transition: transform 0.15s linear; }
+
+    /* ── SIDE BUTTONS ────────────────────────────────────── */
+    .side-btns { position: fixed; right: calc(16px + var(--safe-right)); bottom: calc(var(--safe-bottom) + 190px); z-index: 100; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+
+    /* ── SETTINGS OPEN BTN in TOP BAR ───────────────────── */
+    .settings-btn { margin-left: 4px; }
   </style>
 </head>
 <body>
@@ -1346,6 +1397,17 @@
 
     <p class="error-msg" id="auth-error"></p>
   </div>
+  <div class="auth-footer">v1.0.0 · Build 202405</div>
+</div>
+
+<!-- VERIFIED SCREEN -->
+<div class="screen hidden" id="verified-screen">
+  <div class="verified-icon">
+    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+  </div>
+  <div class="verified-title">Email Verificata!</div>
+  <div class="verified-sub">Il tuo account è stato verificato con successo.<br/>Ora puoi accedere a Orizon.</div>
+  <button class="btn btn-primary" style="width:100%;max-width:280px;margin-top:8px" onclick="goToMapFromVerified()">Vai alla Mappa →</button>
 </div>
 
 <!-- MAP SCREEN -->
@@ -1359,10 +1421,23 @@
       Orizon
     </div>
     <div class="top-actions">
-      <div class="profile-chip" onclick="handleLogout()">
+      <div class="profile-chip" onclick="openSettings()">
         <div class="profile-chip-avatar" id="profile-avatar">?</div>
         <span class="profile-chip-name" id="profile-name">...</span>
       </div>
+    </div>
+  </div>
+
+  <!-- Compass Bar -->
+  <div class="compass-bar" id="compass-bar">
+    <span class="compass-needle" id="compass-needle">🧭</span>
+    <span id="compass-text">N 0°</span>
+  </div>
+
+  <!-- Side Buttons -->
+  <div class="side-btns">
+    <div class="icon-btn" id="compass-btn" onclick="toggleCompass()" title="Modalità bussola">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13l-2 5.5 5.5-2L16 5l-5 .5z"/><circle cx="12" cy="12" r="1.5"/></svg>
     </div>
   </div>
 
@@ -1434,19 +1509,109 @@
   </div>
 </div>
 
-<!-- CONFIRM MODAL -->
+<!-- CONFIRM MODAL (for QR shower: accept/reject incoming request) -->
 <div class="modal-overlay" id="confirm-modal">
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">Nuova connessione</div>
-      <div class="close-btn" onclick="closeConfirmModal()">✕</div>
+      <div class="close-btn" onclick="rejectIncomingRequest()">✕</div>
     </div>
     <div class="confirm-avatar" id="confirm-avatar">?</div>
     <div class="confirm-name" id="confirm-name">—</div>
-    <div class="confirm-sub">Vuoi aggiungere questa persona alla tua cerchia?</div>
+    <div class="confirm-sub">Vuole aggiungerti alla sua cerchia.<br/>Vuoi accettare?</div>
     <div class="confirm-actions">
-      <button class="btn btn-danger" style="flex:1" onclick="closeConfirmModal()">Rifiuta</button>
-      <button class="btn btn-primary" style="flex:1" onclick="acceptConnection()">Accetta</button>
+      <button class="btn btn-danger" style="flex:1" onclick="rejectIncomingRequest()">Rifiuta</button>
+      <button class="btn btn-primary" style="flex:1" onclick="acceptIncomingRequest()">Accetta ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR WAIT MODAL (for scanner: waiting for shower to confirm) -->
+<div class="modal-overlay" id="qr-wait-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Richiesta inviata</div>
+      <div class="close-btn" onclick="closeQRWaitModal()">✕</div>
+    </div>
+    <div class="qr-wait">
+      <div class="qr-wait-spinner"></div>
+      <div class="qr-wait-name" id="qr-wait-name">—</div>
+      <div class="qr-wait-text">Attendi che l'altro utente<br/>accetti la connessione...</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVIGATION MODAL (transport selection) -->
+<div class="modal-overlay" id="nav-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Navigazione</div>
+      <div class="close-btn" onclick="closeNavModal()">✕</div>
+    </div>
+    <div style="font-family:var(--mono);font-size:0.62rem;color:var(--text-muted);text-align:center">
+      Apri Google Maps verso <strong id="nav-target-name">—</strong>
+    </div>
+    <div class="nav-options">
+      <div class="nav-option" onclick="openGoogleMaps('w')">
+        <div class="nav-option-icon"><svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/></svg></div>
+        <div>
+          <div class="nav-option-label">A piedi</div>
+          <div class="nav-option-sub">Percorso pedonale</div>
+        </div>
+      </div>
+      <div class="nav-option" onclick="openGoogleMaps('d')">
+        <div class="nav-option-icon"><svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg></div>
+        <div>
+          <div class="nav-option-label">In auto</div>
+          <div class="nav-option-sub">Percorso in auto</div>
+        </div>
+      </div>
+      <div class="nav-option" onclick="openGoogleMaps('r')">
+        <div class="nav-option-icon"><svg viewBox="0 0 24 24"><path d="M12 2c-4.42 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2.23l2-2H14l2 2H18v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zm0 2c3.62 0 5.5.46 5.93 1.5H6.07C6.5 4.46 8.38 4 12 4zm-.5 6.5h-4v-3h4v3zm1 0v-3h4v3h-4z"/></svg></div>
+        <div>
+          <div class="nav-option-label">Trasporto pubblico</div>
+          <div class="nav-option-sub">Bus, metro, treno</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Impostazioni</div>
+      <div class="close-btn" onclick="closeSettings()">✕</div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-group-label">Profilo</div>
+      <div class="settings-item" style="cursor:default">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <div class="settings-item-text">
+          <div class="settings-item-title" id="settings-name">—</div>
+          <div class="settings-item-value" id="settings-email">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-group-label">Info</div>
+      <div class="settings-item" style="cursor:default">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        <div class="settings-item-text">
+          <div class="settings-item-title">Orizon</div>
+          <div class="settings-item-value">Versione 1.0.0 · Build 202405</div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-item danger" onclick="handleLogout()">
+        <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+        <div class="settings-item-text">
+          <div class="settings-item-title">Esci</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1461,7 +1626,9 @@ const SUPABASE_URL = window.SUPABASE_URL || 'https://slqgdewtdbugoofthcao.supaba
 const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNscWdkZXd0ZGJ1Z29vZnRoY2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyODMzOTYsImV4cCI6MjA4Nzg1OTM5Nn0.Gj9FKhlHdTBLOAvhwWV07RFz22A-BQJh6RwzufI0ehw';
 
 const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: true }
+});
 
 // ─── STATE ───────────────────────────────────────────────
 let currentUser = null;
@@ -1478,9 +1645,29 @@ let pendingConnection = null;
 let scanAnimFrame = null;
 let videoStream = null;
 let contacts = [];
+let compassMode = false;
+let compassHeading = 0;
+let hiddenUsers = (() => { try { return JSON.parse(localStorage.getItem('orizon_hidden_users') || '[]'); } catch { return []; } })();
+let navTargetLat = null;
+let navTargetLng = null;
 
 // ─── INIT ────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
+  // Check for email verification redirect (Supabase v2 uses hash fragment)
+  const hash = new URLSearchParams(window.location.hash.slice(1));
+  const hashType = hash.get('type');
+  if (hashType === 'email_confirmation' || hashType === 'signup') {
+    // Supabase already processes the token; get resulting session
+    const { data: { session } } = await db.auth.getSession();
+    if (session) {
+      currentUser = session.user;
+      await loadUserProfile();
+    }
+    history.replaceState({}, '', '/');
+    showVerifiedScreen();
+    return;
+  }
+
   const { data: { session } } = await db.auth.getSession();
   if (session) {
     currentUser = session.user;
@@ -1504,6 +1691,23 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ─── AUTH ────────────────────────────────────────────────
+function showVerifiedScreen() {
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('verified-screen').classList.remove('hidden');
+}
+
+async function goToMapFromVerified() {
+  document.getElementById('verified-screen').classList.add('hidden');
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    if (!userProfile) await loadUserProfile();
+    showMapScreen();
+  } else {
+    document.getElementById('auth-screen').classList.remove('hidden');
+  }
+}
+
 function showRegister() {
   document.getElementById('auth-login').style.display = 'none';
   document.getElementById('auth-register').style.display = 'block';
@@ -1541,6 +1745,14 @@ async function handleRegister() {
   });
   if (error) return setAuthError(error.message);
 
+  // If email confirmation required, show message
+  if (!data.session) {
+    setAuthError('');
+    document.getElementById('auth-error').style.color = 'var(--green)';
+    document.getElementById('auth-error').textContent = '✓ Controlla la tua email per verificare l\'account.';
+    return;
+  }
+
   currentUser = data.user;
   // Create profile
   await db.from('profiles').upsert({
@@ -1554,8 +1766,10 @@ async function handleRegister() {
 }
 
 async function handleLogout() {
+  closeSettings();
   if (!confirm('Vuoi uscire da Orizon?')) return;
   stopGeolocation();
+  stopCompass();
   if (realtimeChannel) db.removeChannel(realtimeChannel);
   await db.auth.signOut();
   currentUser = null; userProfile = null;
@@ -1563,8 +1777,22 @@ async function handleLogout() {
   document.getElementById('auth-screen').classList.remove('hidden');
 }
 
+// ─── SETTINGS ────────────────────────────────────────────
+function openSettings() {
+  const name = userProfile?.display_name || currentUser?.email?.split('@')[0] || '—';
+  const email = userProfile?.email || currentUser?.email || '—';
+  document.getElementById('settings-name').textContent = name;
+  document.getElementById('settings-email').textContent = email;
+  document.getElementById('settings-modal').classList.add('open');
+}
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+
 function setAuthError(msg) {
-  document.getElementById('auth-error').textContent = msg;
+  const el = document.getElementById('auth-error');
+  el.style.color = '';
+  el.textContent = msg;
 }
 
 async function loadUserProfile() {
@@ -1629,6 +1857,12 @@ function createMyMarker(lat, lng) {
 }
 
 function updateContactMarker(contact, lat, lng) {
+  // Don't show marker if user is in hidden list
+  if (hiddenUsers.includes(contact.id)) {
+    removeContactMarker(contact.id);
+    return;
+  }
+
   const name = contact.display_name || '?';
   const initial = name[0].toUpperCase();
   const colors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981'];
@@ -1645,7 +1879,10 @@ function updateContactMarker(contact, lat, lng) {
   el.style.color = '#fff';
   el.textContent = initial;
   el.title = name;
-  el.onclick = () => map.flyTo([lat, lng], 16, { duration: 1 });
+  el.onclick = () => {
+    map.flyTo([lat, lng], 16, { duration: 1 });
+    openNavModal(name, lat, lng);
+  };
 
   contactMarkers[contact.id] = L.marker([lat, lng], {
     icon: L.divIcon({ html: el, className: '', iconSize: [36, 36], iconAnchor: [18, 18] })
@@ -1704,18 +1941,22 @@ async function toggleVisibility() {
   isVisible = !isVisible;
   const fab = document.getElementById('visibility-fab');
   const icon = document.getElementById('vis-icon');
+  const dot = document.getElementById('tracking-dot');
 
   if (isVisible) {
-    fab.classList.remove('off');
-    fab.style.background = 'var(--green)';
-    fab.style.boxShadow = '0 0 30px rgba(34,197,94,0.5)';
+    fab.classList.remove('off', 'vis-off');
+    fab.style.background = '';
+    fab.style.boxShadow = '';
     icon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+    dot.classList.remove('vis-off', 'hidden-dot');
     showToast('Posizione visibile ✓');
   } else {
-    fab.classList.add('off');
-    fab.style.background = 'var(--surface2)';
-    fab.style.boxShadow = 'none';
+    fab.classList.add('vis-off');
+    fab.classList.remove('off');
+    fab.style.background = '';
+    fab.style.boxShadow = '';
     icon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+    dot.classList.add('vis-off');
     showToast('Posizione nascosta');
   }
 
@@ -1754,6 +1995,16 @@ async function loadContacts() {
   });
 }
 
+function contactStatusText(c, loc, isOnline, isHidden) {
+  if (isHidden) return '🚫 Nascosto da te';
+  if (isOnline) {
+    if (loc && myMarker) return calcDist(myMarker.getLatLng(), { lat: loc.lat, lng: loc.lng }) + ' km';
+    return 'Visibile';
+  }
+  const lastSeen = loc ? timeSince(new Date(loc.last_seen)) : 'Mai';
+  return 'Nascosto · ' + lastSeen;
+}
+
 function renderContactsList(locations) {
   const list = document.getElementById('contacts-list');
   if (contacts.length === 0) {
@@ -1761,29 +2012,60 @@ function renderContactsList(locations) {
     return;
   }
 
+  const SVG_EYE_ON = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+  const SVG_EYE_OFF = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+  const SVG_NAV = '<path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>';
+
   list.innerHTML = contacts.map(c => {
     const loc = locations.find(l => l.user_id === c.id);
-    const isOnline = loc && loc.is_visible;
-    const lastSeen = loc ? timeSince(new Date(loc.last_seen)) : 'Mai';
-    const dist = loc && myMarker ? calcDist(myMarker.getLatLng(), { lat: loc.lat, lng: loc.lng }) : null;
+    const isOnline = !!(loc && loc.is_visible);
+    const isHidden = hiddenUsers.includes(c.id);
     const initial = (c.display_name || '?')[0].toUpperCase();
     const colors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981'];
     const color = colors[(c.display_name || '').charCodeAt(0) % colors.length];
+    const statusText = contactStatusText(c, loc, isOnline, isHidden);
+    const eyeSvg = isHidden ? SVG_EYE_OFF : SVG_EYE_ON;
+    const eyeTitle = isHidden ? 'Mostra sulla mappa' : 'Nascondi dalla mappa';
+    const navBtn = isOnline && !isHidden
+      ? `<div class="mini-btn" onclick="event.stopPropagation();openNavModal('${c.display_name || c.email}',${loc.lat},${loc.lng})"><svg viewBox="0 0 24 24">${SVG_NAV}</svg></div>`
+      : '';
 
     return `
-      <div class="contact-card" onclick="flyToContact('${c.id}', ${loc?.lat || 0}, ${loc?.lng || 0}, ${!!isOnline})">
+      <div class="contact-card" onclick="flyToContact('${c.id}', ${loc?.lat || 0}, ${loc?.lng || 0}, ${isOnline})">
         <div class="contact-avatar" style="background:${color}">
           ${initial}
           <div class="status-dot ${isOnline ? 'online' : 'offline'}"></div>
         </div>
         <div class="contact-info">
           <div class="contact-name">${c.display_name || c.email}</div>
-          <div class="contact-dist">${isOnline ? (dist ? dist + ' km' : 'Visibile') : 'Nascosto · ' + lastSeen}</div>
+          <div class="contact-dist">${statusText}</div>
         </div>
-        ${isOnline ? `<div class="locate-btn" onclick="event.stopPropagation();flyToContact('${c.id}',${loc.lat},${loc.lng},true)"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>` : ''}
+        <div class="contact-actions">
+          <div class="mini-btn hide-user-btn ${isHidden ? 'active' : ''}" onclick="event.stopPropagation();toggleHideUser('${c.id}')" title="${eyeTitle}">
+            <svg viewBox="0 0 24 24">${eyeSvg}</svg>
+          </div>
+          ${navBtn}
+        </div>
       </div>
     `;
   }).join('');
+}
+
+// ─── PRIVACY: HIDE/SHOW USER ──────────────────────────────
+function toggleHideUser(userId) {
+  if (hiddenUsers.includes(userId)) {
+    hiddenUsers = hiddenUsers.filter(id => id !== userId);
+    // Reload marker for now-visible user
+    const contact = contacts.find(c => c.id === userId);
+    if (contact) loadContactsLocations();
+    showToast('Contatto visibile sulla mappa');
+  } else {
+    hiddenUsers.push(userId);
+    removeContactMarker(userId);
+    showToast('Contatto nascosto dalla mappa');
+  }
+  localStorage.setItem('orizon_hidden_users', JSON.stringify(hiddenUsers));
+  loadContactsLocations();
 }
 
 function flyToContact(userId, lat, lng, isOnline) {
@@ -1832,8 +2114,25 @@ function subscribeRealtime() {
       event: 'INSERT', schema: 'public', table: 'connections'
     }, (payload) => {
       const conn = payload.new;
+      // Shower: receives pending request from scanner
       if (conn.user_b === currentUser.id && conn.status === 'pending') {
         handleIncomingConnectionRequest(conn);
+      }
+    })
+    .on('postgres_changes', {
+      event: 'UPDATE', schema: 'public', table: 'connections'
+    }, (payload) => {
+      const conn = payload.new;
+      // Scanner: their pending request was accepted by the shower
+      if (conn.user_a === currentUser.id && conn.status === 'accepted') {
+        closeQRWaitModal();
+        showToast('✓ Connessione accettata!');
+        loadContacts();
+      }
+      // Scanner: their request was rejected
+      if (conn.user_a === currentUser.id && conn.status === 'rejected') {
+        closeQRWaitModal();
+        showToast('Richiesta rifiutata');
       }
     })
     .subscribe();
@@ -1938,42 +2237,62 @@ async function handleIncomingQR(token) {
     const decoded = JSON.parse(atob(token));
     if (!decoded.uid || decoded.uid === currentUser.id) return;
 
-    // Check if already connected
+    // Check if already connected or pending
     const { data: existing } = await db.from('connections')
       .select('*')
       .or(`and(user_a.eq.${currentUser.id},user_b.eq.${decoded.uid}),and(user_a.eq.${decoded.uid},user_b.eq.${currentUser.id})`)
-      .single();
+      .maybeSingle();
 
-    if (existing) { showToast('Già nella tua cerchia!'); return; }
+    if (existing) {
+      if (existing.status === 'accepted') { showToast('Già nella tua cerchia!'); return; }
+      if (existing.status === 'pending') { showToast('Richiesta già inviata, attendi...'); return; }
+    }
 
-    // Show confirm modal
-    pendingConnection = decoded;
-    document.getElementById('confirm-avatar').textContent = (decoded.name || '?')[0].toUpperCase();
-    document.getElementById('confirm-name').textContent = decoded.name || 'Utente sconosciuto';
-    document.getElementById('confirm-modal').classList.add('open');
+    // Scanner inserts pending request and shows wait modal
+    const { data: conn, error } = await db.from('connections').insert({
+      user_a: currentUser.id,
+      user_b: decoded.uid,
+      status: 'pending',
+      created_at: new Date().toISOString()
+    }).select().single();
+
+    if (error) { showToast('Errore: ' + error.message); return; }
+
+    pendingConnection = { ...decoded, connId: conn?.id };
+    document.getElementById('qr-wait-name').textContent = decoded.name || 'Utente';
+    document.getElementById('qr-wait-modal').classList.add('open');
   } catch (e) {
     showToast('QR non valido');
   }
 }
 
-async function acceptConnection() {
+function closeQRWaitModal() {
+  document.getElementById('qr-wait-modal').classList.remove('open');
+  pendingConnection = null;
+}
+
+// Shower: accept incoming pending request
+async function acceptIncomingRequest() {
   if (!pendingConnection) return;
   document.getElementById('confirm-modal').classList.remove('open');
 
-  await db.from('connections').insert({
-    user_a: currentUser.id,
-    user_b: pendingConnection.uid,
-    status: 'accepted',
-    created_at: new Date().toISOString()
-  });
+  await db.from('connections')
+    .update({ status: 'accepted' })
+    .eq('id', pendingConnection.connId);
 
   showToast('✓ ' + pendingConnection.name + ' aggiunto!');
   pendingConnection = null;
   await loadContacts();
 }
 
-function closeConfirmModal() {
+// Shower: reject incoming pending request
+async function rejectIncomingRequest() {
   document.getElementById('confirm-modal').classList.remove('open');
+  if (pendingConnection?.connId) {
+    await db.from('connections')
+      .update({ status: 'rejected' })
+      .eq('id', pendingConnection.connId);
+  }
   pendingConnection = null;
 }
 
@@ -1983,6 +2302,77 @@ async function handleIncomingConnectionRequest(conn) {
   document.getElementById('confirm-avatar').textContent = (pendingConnection.name || '?')[0].toUpperCase();
   document.getElementById('confirm-name').textContent = pendingConnection.name;
   document.getElementById('confirm-modal').classList.add('open');
+}
+
+// ─── NAVIGATION MODAL ────────────────────────────────────
+function openNavModal(name, lat, lng) {
+  navTargetLat = lat;
+  navTargetLng = lng;
+  document.getElementById('nav-target-name').textContent = name;
+  document.getElementById('nav-modal').classList.add('open');
+}
+function closeNavModal() {
+  document.getElementById('nav-modal').classList.remove('open');
+}
+function openGoogleMaps(mode) {
+  if (navTargetLat === null) return;
+  const url = `https://maps.google.com/maps?daddr=${navTargetLat},${navTargetLng}&dirflg=${mode}`;
+  window.open(url, '_blank');
+  closeNavModal();
+}
+
+// ─── COMPASS MODE ─────────────────────────────────────────
+function toggleCompass() {
+  compassMode = !compassMode;
+  const btn = document.getElementById('compass-btn');
+  const bar = document.getElementById('compass-bar');
+  btn.classList.toggle('active-btn', compassMode);
+
+  if (compassMode) {
+    bar.classList.add('visible');
+    if (window.DeviceOrientationEvent) {
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(perm => { if (perm === 'granted') window.addEventListener('deviceorientation', handleOrientation, true); })
+          .catch(() => showToast('Accesso bussola negato'));
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation, true);
+      }
+    } else {
+      showToast('Bussola non supportata');
+      compassMode = false;
+      btn.classList.remove('active-btn');
+      bar.classList.remove('visible');
+    }
+  } else {
+    bar.classList.remove('visible');
+    window.removeEventListener('deviceorientation', handleOrientation, true);
+  }
+}
+
+function handleOrientation(e) {
+  if (!compassMode) return;
+  // Use webkitCompassHeading on iOS, or alpha on Android
+  const heading = e.webkitCompassHeading !== null && e.webkitCompassHeading !== undefined
+    ? e.webkitCompassHeading
+    : (e.alpha !== null && e.alpha !== undefined ? (360 - e.alpha) % 360 : 0);
+  compassHeading = heading;
+
+  const dirs = ['N','NE','E','SE','S','SO','O','NO'];
+  const dir = dirs[Math.round(heading / 45) % 8];
+  document.getElementById('compass-needle').style.transform = `rotate(${heading}deg)`;
+  document.getElementById('compass-text').textContent = `${dir} ${Math.round(heading)}°`;
+
+  // Rotate my marker with compass heading
+  if (myMarker) {
+    const el = myMarker.getElement();
+    if (el) el.style.transform = `rotate(${heading}deg)`;
+  }
+}
+
+function stopCompass() {
+  compassMode = false;
+  window.removeEventListener('deviceorientation', handleOrientation, true);
 }
 
 // ─── TOAST ───────────────────────────────────────────────
