@@ -2,7 +2,7 @@
   "version": 2,
   "public": true,
   "buildCommand": "",
-  "outputDirectory": "public",
+  "outputDirectory": "Public",
   "routes": [
     {
       "src": "/sw.js",
@@ -14,7 +14,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/Public/index.html"
     }
   ]
 }
