@@ -1349,6 +1349,7 @@
 
     /* ── SETTINGS OPEN BTN in TOP BAR ───────────────────── */
     .settings-btn { margin-left: 4px; }
+    .top-bar-left { display: flex; align-items: center; gap: 8px; }
 
     /* ── HAMBURGER MENU BTN ─────────────────────────────── */
     .hamburger-btn {
@@ -1430,6 +1431,7 @@
     }
     .sidebar-action-btn:active { transform: scale(0.96); }
     .sidebar-action-btn svg { width: 16px; height: 16px; fill: var(--text-muted); display: block; margin: 0 auto 4px; }
+    .sidebar-empty { font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); padding: 16px 0; text-align: center; }
 
     /* ── FAB HIDE ON SIDEBAR ────────────────────────────── */
     .fab-container.sidebar-hidden,
@@ -1687,7 +1689,7 @@
 
   <!-- Top Bar -->
   <div class="top-bar">
-    <div style="display:flex;align-items:center;gap:8px">
+    <div class="top-bar-left">
       <button class="hamburger-btn" onclick="openSidebar()" aria-label="Menu">
         <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
       </button>
@@ -1985,7 +1987,7 @@
       </div>
       <input type="number" id="geofence-radius" placeholder="Raggio in metri (es. 500)" min="50" step="50">
       <button class="btn btn-primary" style="width:100%" onclick="addGeofence()">Aggiungi Geofence</button>
-      <button class="btn" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:0.7rem" onclick="useCurrentPositionForGeofence()">📍 Usa posizione attuale</button>
+      <button class="btn btn-ghost" style="width:100%;font-size:0.7rem" onclick="useCurrentPositionForGeofence()">📍 Usa posizione attuale</button>
     </div>
   </div>
 </div>
@@ -2058,6 +2060,7 @@ let navTargetLat = null;
 let navTargetLng = null;
 let darkTileLayer = null;
 let lightTileLayer = null;
+const MAX_GEOFENCE_RADIUS_METERS = 50000;
 
 // ─── INIT ────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
@@ -2272,6 +2275,12 @@ function getMarkerColorClass() {
   return 'marker-green';
 }
 
+function getArrowFillColor() {
+  if (ghostMode || visibilityState === 'ghost') return 'var(--red)';
+  if (visibilityState === 'limited') return 'var(--orange)';
+  return 'var(--accent)';
+}
+
 function createMyMarker(lat, lng) {
   if (myMarker) {
     myMarker.setLatLng([lat, lng]);
@@ -2305,7 +2314,7 @@ function updateMyMarkerAppearance() {
 
   if (compassMode) {
     container.style.cssText = 'position:relative;width:32px;height:32px;';
-    const fillColor = ghostMode ? 'var(--red)' : (visibilityState === 'limited' ? 'var(--orange)' : 'var(--accent)');
+    const fillColor = getArrowFillColor();
     container.innerHTML = `<div class="my-marker-arrow"><svg viewBox="0 0 24 24" fill="${fillColor}"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg></div>`;
     const latlng = myMarker.getLatLng();
     myMarker.setIcon(L.divIcon({ html: container, className: '', iconSize: [32, 32], iconAnchor: [16, 16] }));
@@ -2924,7 +2933,7 @@ function closeSidebar() {
 function renderSidebarContacts() {
   const list = document.getElementById('sidebar-contacts-list');
   if (!contacts.length) {
-    list.innerHTML = '<div style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);padding:16px 0;text-align:center">Nessun contatto</div>';
+    list.innerHTML = '<div class="sidebar-empty">Nessun contatto</div>';
     return;
   }
   const colors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981'];
@@ -3046,7 +3055,7 @@ function addGeofence() {
   if (!name) { showToast('Inserisci un nome'); return; }
   if (isNaN(lat) || isNaN(lng)) { showToast('Coordinate non valide'); return; }
   if (isNaN(radius) || radius < 50) { showToast('Raggio minimo 50m'); return; }
-  if (radius > 50000) { showToast('Raggio massimo 50km'); return; }
+  if (radius > MAX_GEOFENCE_RADIUS_METERS) { showToast('Raggio massimo 50km'); return; }
 
   geofences.push({ name, lat, lng, radius });
   localStorage.setItem('orizon_geofences', JSON.stringify(geofences));
