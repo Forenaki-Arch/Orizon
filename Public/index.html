@@ -1349,6 +1349,183 @@
 
     /* ── SETTINGS OPEN BTN in TOP BAR ───────────────────── */
     .settings-btn { margin-left: 4px; }
+
+    /* ── HAMBURGER BTN ───────────────────────────────────── */
+    .hamburger-btn {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all var(--transition);
+      backdrop-filter: blur(12px); flex-shrink: 0;
+    }
+    .hamburger-btn:hover { border-color: rgba(99,179,255,0.3); background: var(--surface2); }
+    .hamburger-btn:active { transform: scale(0.92); }
+    .hamburger-btn svg { width: 20px; height: 20px; fill: var(--text); }
+
+    /* ── ORIZON TITLE GRADIENT / GLOW ───────────────────── */
+    .orizon-title {
+      background: linear-gradient(135deg, #e2eeff 0%, #93c5fd 50%, #3b82f6 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; transition: filter 0.3s;
+    }
+    .orizon-title:hover { filter: drop-shadow(0 0 10px rgba(99,179,255,0.9)); }
+
+    /* ── SIDEBAR / DRAWER ────────────────────────────────── */
+    .sidebar-overlay {
+      position: fixed; inset: 0; z-index: 150;
+      background: rgba(4,8,18,0.72); backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .sidebar-overlay.open { opacity: 1; pointer-events: all; }
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 160;
+      width: 280px; max-width: 85vw;
+      background: var(--surface); border-right: 1px solid var(--border);
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.32,0.72,0,1);
+      display: flex; flex-direction: column;
+      padding-top: calc(var(--safe-top) + 16px);
+      padding-bottom: calc(var(--safe-bottom) + 16px);
+      backdrop-filter: blur(20px);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-header {
+      padding: 4px 16px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; }
+    .sidebar-logo-mark {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+    .sidebar-logo-mark svg { width: 16px; height: 16px; fill: var(--accent); }
+    .sidebar-logo-name {
+      font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .sidebar-close {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--surface2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 0.9rem; color: var(--text-muted); transition: all 0.2s;
+    }
+    .sidebar-close:hover { background: rgba(239,68,68,0.15); color: var(--red); }
+    .sidebar-nav { padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 14px; border-radius: 14px;
+      cursor: pointer; transition: all var(--transition);
+      font-weight: 600; font-size: 0.9rem; color: var(--text);
+    }
+    .sidebar-item:hover { background: var(--surface2); }
+    .sidebar-item:active { transform: scale(0.97); opacity: 0.8; }
+    .sidebar-item svg { width: 20px; height: 20px; fill: var(--text-muted); flex-shrink: 0; transition: fill 0.2s; }
+    .sidebar-item:hover svg { fill: var(--accent); }
+    .sidebar-item.active { background: rgba(59,130,246,0.12); color: var(--accent); }
+    .sidebar-item.active svg { fill: var(--accent); }
+    .sidebar-item-badge {
+      margin-left: auto; font-family: var(--mono); font-size: 0.58rem;
+      background: var(--accent); color: #fff;
+      padding: 2px 7px; border-radius: 20px;
+    }
+    .sidebar-footer { padding: 12px 12px 0; border-top: 1px solid var(--border); }
+    .sidebar-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 14px;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .sidebar-user:hover { background: var(--surface2); }
+    .sidebar-user-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+    }
+    .sidebar-user-info { flex: 1; overflow: hidden; }
+    .sidebar-user-name { font-weight: 700; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user-email { font-family: var(--mono); font-size: 0.58rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ── FAB FADE WHEN SIDEBAR OPEN ─────────────────────── */
+    .fab-container.sidebar-open { opacity: 0; pointer-events: none; }
+    .fab-container { transition: opacity 0.25s; }
+
+    /* ── ARROW MARKER ────────────────────────────────────── */
+    .my-marker-arrow {
+      width: 0; height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 24px solid var(--accent);
+      filter: drop-shadow(0 0 8px var(--accent-glow));
+      transform-origin: 50% 75%;
+    }
+    .my-marker-arrow.vis-partial { border-bottom-color: var(--orange); filter: drop-shadow(0 0 8px var(--orange-glow)); }
+    .my-marker-arrow.vis-ghost { border-bottom-color: var(--red); filter: drop-shadow(0 0 8px rgba(239,68,68,0.4)); }
+
+    /* ── 3-STATE VISIBILITY ──────────────────────────────── */
+    .fab-visibility.vis-partial { background: var(--orange) !important; box-shadow: 0 4px 30px var(--orange-glow) !important; }
+    .fab-visibility.vis-ghost { background: var(--red) !important; box-shadow: 0 4px 30px rgba(239,68,68,0.4) !important; }
+    .tracking-dot.vis-partial { background: var(--orange) !important; box-shadow: 0 0 10px var(--orange) !important; animation: none !important; }
+    .tracking-dot.vis-ghost { background: var(--red) !important; box-shadow: 0 0 10px var(--red) !important; animation: none !important; }
+
+    /* ── BATTERY BADGE ───────────────────────────────────── */
+    .battery-info { display: inline-flex; align-items: center; gap: 3px; font-family: var(--mono); font-size: 0.58rem; color: var(--green); }
+    .battery-info.low { color: var(--orange); }
+    .battery-info.critical { color: var(--red); }
+
+    /* ── DARK/LIGHT TOGGLE ───────────────────────────────── */
+    .theme-toggle {
+      position: relative; width: 44px; height: 24px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 12px; cursor: pointer; transition: background 0.3s, border-color 0.3s;
+      flex-shrink: 0;
+    }
+    .theme-toggle.light { background: #c7d8ff; border-color: #93c5fd; }
+    .theme-toggle::after {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--text-muted); transition: transform 0.3s, background 0.3s;
+    }
+    .theme-toggle.light::after { transform: translateX(20px); background: var(--accent); }
+
+    /* ── LIGHT MODE ──────────────────────────────────────── */
+    body.light-mode {
+      --bg: #f0f4ff;
+      --surface: rgba(255,255,255,0.97);
+      --surface2: rgba(235,242,255,0.95);
+      --border: rgba(59,130,246,0.2);
+      --text: #1a2340;
+      --text-muted: #5a7aaa;
+      --accent-glow: rgba(59,130,246,0.25);
+    }
+    body.light-mode .top-bar { background: linear-gradient(180deg, rgba(240,244,255,0.97) 0%, rgba(240,244,255,0.7) 80%, transparent 100%); }
+    body.light-mode .leaflet-tile { filter: none; }
+    body.light-mode #loading-screen { background: var(--bg); }
+
+    /* ── "IL MONDO ORIZON" ───────────────────────────────── */
+    .orizon-world-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 16px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .orizon-world-icon {
+      width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2);
+    }
+    .orizon-world-icon svg { width: 20px; height: 20px; fill: var(--accent); }
+    .orizon-world-title { font-weight: 700; font-size: 0.88rem; margin-bottom: 4px; }
+    .orizon-world-text { font-family: var(--mono); font-size: 0.62rem; color: var(--text-muted); line-height: 1.7; }
+    .tip-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+      font-family: var(--mono); font-size: 0.62rem; color: var(--text-muted); line-height: 1.6;
+    }
+    .tip-item:last-child { border-bottom: none; }
+    .tip-num { color: var(--accent); font-weight: 700; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -1416,9 +1593,14 @@
 
   <!-- Top Bar -->
   <div class="top-bar">
-    <div class="app-name">
-      <div class="dot" id="tracking-dot"></div>
-      Orizon
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="hamburger-btn" onclick="openSidebar()" title="Menu Cerchia">
+        <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      </div>
+      <div class="app-name">
+        <div class="dot" id="tracking-dot"></div>
+        <span class="orizon-title">Orizon</span>
+      </div>
     </div>
     <div class="top-actions">
       <div class="profile-chip" onclick="openSettings()">
@@ -1436,8 +1618,8 @@
 
   <!-- Side Buttons -->
   <div class="side-btns">
-    <div class="icon-btn" id="compass-btn" onclick="toggleCompass()" title="Modalità bussola">
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13l-2 5.5 5.5-2L16 5l-5 .5z"/><circle cx="12" cy="12" r="1.5"/></svg>
+    <div class="icon-btn" id="compass-btn" onclick="toggleCompass()" title="Modalità freccia/direzione">
+      <svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
     </div>
   </div>
 
@@ -1447,11 +1629,11 @@
   </div>
 
   <!-- FABs -->
-  <div class="fab-container">
+  <div class="fab-container" id="fab-container">
     <div class="fab fab-add" onclick="openQRModal()" title="Aggiungi contatto">
       <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
     </div>
-    <div class="fab fab-visibility" id="visibility-fab" onclick="toggleVisibility()">
+    <div class="fab fab-visibility" id="visibility-fab" onclick="toggleVisibility()" title="Cambia visibilità">
       <svg viewBox="0 0 24 24" id="vis-icon"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
     </div>
   </div>
@@ -1473,6 +1655,57 @@
         Nessun contatto ancora.<br/>
         Premi + per aggiungere qualcuno<br/>
         alla tua cerchia.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      </div>
+      <span class="sidebar-logo-name">Orizon</span>
+    </div>
+    <div class="sidebar-close" onclick="closeSidebar()">✕</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="sidebar-item active" onclick="closeSidebar()">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      Mappa
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();openQRModal()">
+      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      Aggiungi contatto
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();toggleCompass()">
+      <svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+      Modalità freccia
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();toggleVisibility()">
+      <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      Cambia visibilità
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();openOrizonWorld()">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      Il Mondo Orizon
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();openSettings()">
+      <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+      Impostazioni
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sidebar-user" onclick="closeSidebar();openSettings()">
+      <div class="sidebar-user-avatar" id="sidebar-avatar">?</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebar-name">—</div>
+        <div class="sidebar-user-email" id="sidebar-email">—</div>
       </div>
     </div>
   </div>
@@ -1596,7 +1829,25 @@
       </div>
     </div>
     <div class="settings-group">
+      <div class="settings-group-label">Aspetto</div>
+      <div class="settings-item" onclick="toggleTheme()">
+        <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+        <div class="settings-item-text">
+          <div class="settings-item-title">Tema</div>
+          <div class="settings-item-value" id="theme-label">Scuro</div>
+        </div>
+        <div class="theme-toggle" id="theme-toggle"></div>
+      </div>
+    </div>
+    <div class="settings-group">
       <div class="settings-group-label">Info</div>
+      <div class="settings-item" onclick="openOrizonWorld();closeSettings()">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        <div class="settings-item-text">
+          <div class="settings-item-title">Il Mondo Orizon</div>
+          <div class="settings-item-value">Mission, guida e privacy</div>
+        </div>
+      </div>
       <div class="settings-item" style="cursor:default">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
         <div class="settings-item-text">
@@ -1610,6 +1861,51 @@
         <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
         <div class="settings-item-text">
           <div class="settings-item-title">Esci</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IL MONDO ORIZON MODAL -->
+<div class="modal-overlay" id="orizon-world-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">🌍 Il Mondo Orizon</div>
+      <div class="close-btn" onclick="closeOrizonWorld()">✕</div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-group-label">La nostra missione</div>
+      <div class="orizon-world-card">
+        <div class="orizon-world-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        </div>
+        <div>
+          <div class="orizon-world-title">Connetti le persone in sicurezza</div>
+          <div class="orizon-world-text">Orizon nasce per permettere alle persone di condividere la propria posizione con chi scelgono, senza tracciamento invasivo, senza raccolta dati e senza vendita di informazioni a terzi. Solo tu decidi chi può vederti.</div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-group-label">Tips &amp; Tricks</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px">
+        <div class="tip-item"><span class="tip-num">01</span> Premi la freccia (→) nella barra destra per attivare la modalità direzione: il tuo punto diventa una freccia che segue il tuo sguardo grazie al giroscopio.</div>
+        <div class="tip-item"><span class="tip-num">02</span> Tocca il FAB verde/arancione/rosso per cambiare la tua visibilità: Verde = visibile a tutti, Arancione = modalità parziale, Rosso = fantasma (invisibile).</div>
+        <div class="tip-item"><span class="tip-num">03</span> Aggiungi un contatto scansionando il suo QR code o mostrando il tuo. Nessuna email, nessun numero di telefono richiesto.</div>
+        <div class="tip-item"><span class="tip-num">04</span> Tocca un contatto nella lista per navigare verso di lui con Google Maps.</div>
+        <div class="tip-item"><span class="tip-num">05</span> Usa l'icona 🚫 su un contatto per nasconderlo dalla mappa senza rimuoverlo dalla cerchia.</div>
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-group-label">Privacy Manifesto</div>
+      <div class="orizon-world-card">
+        <div class="orizon-world-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+        </div>
+        <div>
+          <div class="orizon-world-title">I tuoi dati sono tuoi</div>
+          <div class="orizon-world-text">• Le coordinate GPS sono cifrate in transito via HTTPS/TLS.<br/>• Nessun dato viene venduto o condiviso con terzi.<br/>• Puoi diventare "fantasma" in qualsiasi momento.<br/>• Le connessioni richiedono conferma reciproca tramite QR.<br/>• Puoi eliminare il tuo account e tutti i dati in qualsiasi momento.</div>
         </div>
       </div>
     </div>
@@ -1637,8 +1933,10 @@ let map = null;
 let myMarker = null;
 let myPulse = null;
 let contactMarkers = {};
+let visState = 'on'; // 'on' | 'partial' | 'ghost'
 let isVisible = true;
 let panelOpen = false;
+let sidebarOpen = false;
 let geoWatcher = null;
 let realtimeChannel = null;
 let pendingConnection = null;
@@ -1647,12 +1945,22 @@ let videoStream = null;
 let contacts = [];
 let compassMode = false;
 let compassHeading = 0;
+let lightMode = (() => { try { return localStorage.getItem('orizon_light_mode') === '1'; } catch { return false; } })();
 let hiddenUsers = (() => { try { return JSON.parse(localStorage.getItem('orizon_hidden_users') || '[]'); } catch { return []; } })();
 let navTargetLat = null;
 let navTargetLng = null;
+let ghostTileLayer = null;
+let darkTileLayer = null;
 
 // ─── INIT ────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
+  // Apply saved theme
+  if (lightMode) {
+    document.body.classList.add('light-mode');
+    document.getElementById('theme-toggle').classList.add('light');
+    document.getElementById('theme-label').textContent = 'Chiaro';
+  }
+
   // Check for email verification redirect (Supabase v2 uses hash fragment)
   const hash = new URLSearchParams(window.location.hash.slice(1));
   const hashType = hash.get('type');
@@ -1813,12 +2121,17 @@ function showMapScreen() {
 
   // Update profile UI
   const name = userProfile?.display_name || currentUser.email.split('@')[0];
+  const email = userProfile?.email || currentUser?.email || '';
   document.getElementById('profile-name').textContent = name.split(' ')[0];
   document.getElementById('profile-avatar').textContent = name[0].toUpperCase();
+  // Update sidebar profile
+  document.getElementById('sidebar-avatar').textContent = name[0].toUpperCase();
+  document.getElementById('sidebar-name').textContent = name;
+  document.getElementById('sidebar-email').textContent = email;
 
   setTimeout(() => {
     initMap();
-    startGeolocation();
+    startGeolocationWithBattery();
     loadContacts();
     subscribeRealtime();
 
@@ -1839,17 +2152,27 @@ function initMap() {
     attributionControl: false
   });
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-  }).addTo(map);
+  darkTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
+  ghostTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 });
+
+  if (lightMode) {
+    ghostTileLayer.addTo(map);
+  } else {
+    darkTileLayer.addTo(map);
+  }
 }
 
 function createMyMarker(lat, lng) {
   if (myMarker) { myMarker.setLatLng([lat, lng]); return; }
 
   const el = document.createElement('div');
-  el.style.cssText = 'position:relative;width:16px;height:16px;';
-  el.innerHTML = `<div class="my-marker"></div><div class="pulse-ring"></div>`;
+  if (compassMode) {
+    el.style.cssText = 'position:relative;width:16px;height:24px;';
+    el.innerHTML = `<div class="my-marker-arrow${visState === 'partial' ? ' vis-partial' : visState === 'ghost' ? ' vis-ghost' : ''}"></div>`;
+  } else {
+    el.style.cssText = 'position:relative;width:16px;height:16px;';
+    el.innerHTML = `<div class="my-marker"></div><div class="pulse-ring"></div>`;
+  }
 
   myMarker = L.marker([lat, lng], {
     icon: L.divIcon({ html: el, className: '', iconSize: [16, 16], iconAnchor: [8, 8] })
@@ -1936,28 +2259,48 @@ function stopGeolocation() {
   }
 }
 
-// ─── VISIBILITY ───────────────────────────────────────────
+// ─── VISIBILITY (3 states: on → partial → ghost) ──────────
 async function toggleVisibility() {
-  isVisible = !isVisible;
+  // Cycle through: on → partial → ghost → on
+  const states = ['on', 'partial', 'ghost'];
+  visState = states[(states.indexOf(visState) + 1) % states.length];
+  isVisible = visState === 'on';
+
   const fab = document.getElementById('visibility-fab');
   const icon = document.getElementById('vis-icon');
   const dot = document.getElementById('tracking-dot');
 
-  if (isVisible) {
-    fab.classList.remove('off', 'vis-off');
-    fab.style.background = '';
-    fab.style.boxShadow = '';
-    icon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
-    dot.classList.remove('vis-off', 'hidden-dot');
-    showToast('Posizione visibile ✓');
+  fab.classList.remove('vis-off', 'vis-partial', 'vis-ghost', 'off');
+  dot.classList.remove('vis-off', 'hidden-dot', 'vis-partial', 'vis-ghost');
+
+  const SVG_EYE = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+  const SVG_EYE_HALF = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zm-9.89-1.3l2.12 2.12C2.84 9.1 2.12 10.5 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2.11 5.7zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2z"/>';
+  const SVG_GHOST = '<path d="M12 2C7.58 2 4 5.58 4 10v12l3-3 2.5 3L12 19l2.5 3L17 19l3 3V10c0-4.42-3.58-8-8-8zm-3 9c-.83 0-1.5-.67-1.5-1.5S8.17 8 9 8s1.5.67 1.5 1.5S9.83 11 9 11zm6 0c-.83 0-1.5-.67-1.5-1.5S14.17 8 15 8s1.5.67 1.5 1.5S15.83 11 15 11z"/>';
+
+  if (visState === 'on') {
+    icon.innerHTML = SVG_EYE;
+    showToast('🟢 Posizione visibile a tutti');
+  } else if (visState === 'partial') {
+    fab.classList.add('vis-partial');
+    dot.classList.add('vis-partial');
+    icon.innerHTML = SVG_EYE_HALF;
+    showToast('🟠 Visibilità limitata (modalità parziale)');
   } else {
-    fab.classList.add('vis-off');
-    fab.classList.remove('off');
-    fab.style.background = '';
-    fab.style.boxShadow = '';
-    icon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
-    dot.classList.add('vis-off');
-    showToast('Posizione nascosta');
+    fab.classList.add('vis-ghost');
+    dot.classList.add('vis-ghost');
+    icon.innerHTML = SVG_GHOST;
+    showToast('🔴 Modalità Fantasma — sei invisibile');
+  }
+
+  // Update arrow marker color if in compass mode
+  if (myMarker) {
+    const el = myMarker.getElement();
+    const arrow = el && el.querySelector('.my-marker-arrow');
+    if (arrow) {
+      arrow.classList.remove('vis-partial', 'vis-ghost');
+      if (visState === 'partial') arrow.classList.add('vis-partial');
+      if (visState === 'ghost') arrow.classList.add('vis-ghost');
+    }
   }
 
   await db.from('locations').update({ is_visible: isVisible })
@@ -2001,8 +2344,20 @@ function contactStatusText(c, loc, isOnline, isHidden) {
     if (loc && myMarker) return calcDist(myMarker.getLatLng(), { lat: loc.lat, lng: loc.lng }) + ' km';
     return 'Visibile';
   }
-  const lastSeen = loc ? timeSince(new Date(loc.last_seen)) : 'Mai';
-  return 'Nascosto · ' + lastSeen;
+  if (loc && loc.last_seen) {
+    const since = timeSince(new Date(loc.last_seen));
+    return `Visto ${since}`;
+  }
+  return 'Mai visto';
+}
+
+function batteryHtml(pct) {
+  if (pct == null) return '';
+  const cls = pct < 15 ? 'critical' : pct < 30 ? 'low' : '';
+  const icon = pct < 15
+    ? '<path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/>'
+    : '<path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zm-2.67 14H11v-2h2v2zm0-4H11V9h2v5z"/>';
+  return `<span class="battery-info ${cls}"><svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor">${icon}</svg>${Math.round(pct * 100)}%</span>`;
 }
 
 function renderContactsList(locations) {
@@ -2026,6 +2381,8 @@ function renderContactsList(locations) {
     const statusText = contactStatusText(c, loc, isOnline, isHidden);
     const eyeSvg = isHidden ? SVG_EYE_OFF : SVG_EYE_ON;
     const eyeTitle = isHidden ? 'Mostra sulla mappa' : 'Nascondi dalla mappa';
+    const batteryPct = loc?.battery_level ?? null;
+    const bHtml = batteryHtml(batteryPct);
     const navBtn = isOnline && !isHidden
       ? `<div class="mini-btn" onclick="event.stopPropagation();openNavModal('${c.display_name || c.email}',${loc.lat},${loc.lng})"><svg viewBox="0 0 24 24">${SVG_NAV}</svg></div>`
       : '';
@@ -2037,7 +2394,7 @@ function renderContactsList(locations) {
           <div class="status-dot ${isOnline ? 'online' : 'offline'}"></div>
         </div>
         <div class="contact-info">
-          <div class="contact-name">${c.display_name || c.email}</div>
+          <div class="contact-name" style="display:flex;align-items:center;gap:6px">${c.display_name || c.email}${bHtml}</div>
           <div class="contact-dist">${statusText}</div>
         </div>
         <div class="contact-actions">
@@ -2321,7 +2678,7 @@ function openGoogleMaps(mode) {
   closeNavModal();
 }
 
-// ─── COMPASS MODE ─────────────────────────────────────────
+// ─── COMPASS / ARROW MODE ────────────────────────────────
 function toggleCompass() {
   compassMode = !compassMode;
   const btn = document.getElementById('compass-btn');
@@ -2330,49 +2687,142 @@ function toggleCompass() {
 
   if (compassMode) {
     bar.classList.add('visible');
+    // Switch my marker to arrow shape
+    rebuildMyMarker();
+
     if (window.DeviceOrientationEvent) {
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission()
-          .then(perm => { if (perm === 'granted') window.addEventListener('deviceorientation', handleOrientation, true); })
-          .catch(() => showToast('Accesso bussola negato'));
+          .then(perm => {
+            if (perm === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation, true);
+              showToast('🧭 Freccia direzionale attiva');
+            } else {
+              showToast('Accesso giroscopio negato');
+            }
+          })
+          .catch(() => showToast('Accesso giroscopio negato'));
       } else {
         window.addEventListener('deviceorientation', handleOrientation, true);
+        showToast('🧭 Freccia direzionale attiva');
       }
     } else {
-      showToast('Bussola non supportata');
+      showToast('Giroscopio non supportato');
       compassMode = false;
       btn.classList.remove('active-btn');
       bar.classList.remove('visible');
+      rebuildMyMarker();
     }
   } else {
     bar.classList.remove('visible');
     window.removeEventListener('deviceorientation', handleOrientation, true);
+    // Switch back to dot marker
+    rebuildMyMarker();
+    showToast('Modalità freccia disattivata');
   }
+}
+
+function rebuildMyMarker() {
+  if (!myMarker) return;
+  const latlng = myMarker.getLatLng();
+  map.removeLayer(myMarker);
+  myMarker = null;
+  createMyMarker(latlng.lat, latlng.lng);
 }
 
 function handleOrientation(e) {
   if (!compassMode) return;
   // Use webkitCompassHeading on iOS, or alpha on Android
-  const heading = e.webkitCompassHeading !== null && e.webkitCompassHeading !== undefined
+  const heading = (e.webkitCompassHeading !== null && e.webkitCompassHeading !== undefined)
     ? e.webkitCompassHeading
     : (e.alpha !== null && e.alpha !== undefined ? (360 - e.alpha) % 360 : 0);
   compassHeading = heading;
 
   const dirs = ['N','NE','E','SE','S','SO','O','NO'];
   const dir = dirs[Math.round(heading / 45) % 8];
-  document.getElementById('compass-needle').style.transform = `rotate(${heading}deg)`;
-  document.getElementById('compass-text').textContent = `${dir} ${Math.round(heading)}°`;
+  const needle = document.getElementById('compass-needle');
+  if (needle) needle.style.transform = `rotate(${heading}deg)`;
+  const txt = document.getElementById('compass-text');
+  if (txt) txt.textContent = `${dir} ${Math.round(heading)}°`;
 
-  // Rotate my marker with compass heading
+  // Rotate arrow marker with heading
   if (myMarker) {
     const el = myMarker.getElement();
-    if (el) el.style.transform = `rotate(${heading}deg)`;
+    const arrow = el && el.querySelector('.my-marker-arrow');
+    if (arrow) {
+      arrow.style.transform = `rotate(${heading}deg)`;
+    } else if (el) {
+      el.style.transform = `rotate(${heading}deg)`;
+    }
   }
 }
 
 function stopCompass() {
   compassMode = false;
   window.removeEventListener('deviceorientation', handleOrientation, true);
+  if (myMarker) {
+    rebuildMyMarker();
+  }
+}
+
+// ─── SIDEBAR ──────────────────────────────────────────────
+function openSidebar() {
+  sidebarOpen = true;
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+  document.getElementById('fab-container').classList.add('sidebar-open');
+}
+
+function closeSidebar() {
+  sidebarOpen = false;
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+  document.getElementById('fab-container').classList.remove('sidebar-open');
+}
+
+// ─── DARK/LIGHT MODE ─────────────────────────────────────
+function toggleTheme() {
+  lightMode = !lightMode;
+  document.body.classList.toggle('light-mode', lightMode);
+  document.getElementById('theme-toggle').classList.toggle('light', lightMode);
+  document.getElementById('theme-label').textContent = lightMode ? 'Chiaro' : 'Scuro';
+  localStorage.setItem('orizon_light_mode', lightMode ? '1' : '0');
+
+  // Swap map tile layers
+  if (map) {
+    if (lightMode) {
+      if (darkTileLayer) map.removeLayer(darkTileLayer);
+      if (ghostTileLayer) ghostTileLayer.addTo(map);
+    } else {
+      if (ghostTileLayer) map.removeLayer(ghostTileLayer);
+      if (darkTileLayer) darkTileLayer.addTo(map);
+    }
+  }
+}
+
+// ─── IL MONDO ORIZON ─────────────────────────────────────
+function openOrizonWorld() {
+  document.getElementById('orizon-world-modal').classList.add('open');
+}
+function closeOrizonWorld() {
+  document.getElementById('orizon-world-modal').classList.remove('open');
+}
+
+// ─── GEOLOCATION (updated to report battery) ─────────────
+function startGeolocationWithBattery() {
+  startGeolocation();
+  // Try to get battery level for own device (visible in location updates)
+  if ('getBattery' in navigator) {
+    navigator.getBattery().then(battery => {
+      const saveBattery = () => {
+        if (!currentUser) return;
+        db.from('locations').update({ battery_level: battery.level })
+          .eq('user_id', currentUser.id).then(() => {}).catch(() => {});
+      };
+      battery.addEventListener('levelchange', saveBattery);
+      saveBattery();
+    }).catch(() => {});
+  }
 }
 
 // ─── TOAST ───────────────────────────────────────────────
